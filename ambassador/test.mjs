@@ -30,7 +30,7 @@ test('expanded public evidence retrieves critical recruiter topics',async()=>{
  ['How did Michael govern Eleos AI at the county?','S10'],
  ['What did Michael do for CDC Windows endpoints?','S11'],
  ['What was his experience with Auris robotic surgery?','S12'],
- ['Is Michael a Dartmouth MPH graduate or candidate?','S13'],
+ ['What education credentials did he earn at University of Wyoming?','S13'],
  ['What is his LinkedIn professional profile?','S8'],
  ['Does he speak Brazilian Portuguese?','S14'],
  ['What is his Emporion financial research project?','S15']
