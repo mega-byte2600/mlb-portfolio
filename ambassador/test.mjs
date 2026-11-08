@@ -46,10 +46,10 @@ test('approved evidence records have unique IDs, stable HTTPS links and explicit
  assert.ok(SOURCES.length>=15);
  const seen=new Set();
  for(const s of SOURCES){
-   assert.match(s.id,/^S\\d+$/);
+   assert.match(s.id,/^S\d+$/);
    assert.ok(!seen.has(s.id),'duplicate source ID '+s.id);seen.add(s.id);
-   assert.match(s.url,/^https:\\/\\//);
+   assert.match(s.url,/^https:\/\//);
    assert.ok(s.title&&s.status&&s.facts&&s.terms);
-   assert.ok(!/api[_-]?key|password\\s*[:=]|bearer\\s+[a-z0-9]/i.test(s.facts));
+   assert.ok(!/api[_-]?key|password\s*[:=]|bearer\s+[a-z0-9]/i.test(s.facts));
  }
 });
