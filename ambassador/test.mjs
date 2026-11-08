@@ -11,3 +11,16 @@ test('rejects cross origin',async()=>{const r=await send({question:'Hardball'},{
 test('rejects oversized user input',async()=>{const r=await send({question:'a'.repeat(400)});assert.equal(r.status,400)});
 test('server strips non-approved citation IDs',async()=>{const r=await worker.fetch(new Request(url,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({question:'Hardball'})}),{AI:{run:async()=>({response:'See fake claim [S999] and Hardball [S1].'})}});const d=await r.json();assert.doesNotMatch(d.answer,/S999/)});
 test('does not call inference when no source matches',async()=>{const r=await worker.fetch(new Request(url,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({question:'galactic lobster circus?'})}),{AI:{run:async()=>{throw Error('should not be called')}}});assert.equal((await r.json()).grounded,false)});
+
+test('extracts GLM chat completion content',async()=>{
+ const r=await worker.fetch(new Request(url,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({question:'What is Hardball?'})}),{AI:{run:async(_model,opts)=>{
+ assert.equal(opts.chat_template_kwargs.enable_thinking,false);
+ assert.equal(opts.max_completion_tokens,750);
+ return {choices:[{message:{content:'Hardball is a baseball analytics project [S1].',role:'assistant'}}]};
+ }}});
+ const d=await r.json();assert.equal(r.status,200);assert.equal(d.grounded,true);assert.match(d.answer,/analytics/);
+});
+test('fails closed when reasoning model returns null content',async()=>{
+ const r=await worker.fetch(new Request(url,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({question:'Hardball'})}),{AI:{run:async()=>({choices:[{message:{content:null,reasoning_content:'private reasoning'}}]})}});
+ assert.equal(r.status,502);assert.equal((await r.json()).error,'Empty AI response');
+});
