@@ -1,7 +1,7 @@
 import { SOURCES } from './sources.js';
 const MODEL='@cf/zai-org/glm-4.7-flash';
 const MAX_MESSAGES=6;
-const UNVERIFIED=/\\b(championship|world series ring|mlb award|mlb contract|employed by (mlb|an? mlb|a baseball|the yankees|the dodgers)|salary|private reference|personal phone number)\\b/i;
+const UNVERIFIED=/\b(championship|world series ring|mlb award|mlb contract|employed by (mlb|an? mlb|a baseball|the yankees|the dodgers)|salary|private reference|personal phone number)\b/i;
 const FOLLOW_UP=/^(and |also |but |why |how |what about |can you |could you |does that |did that |is that |tell me more|explain|expand|elaborate|in baseball|in mlb|for a club|for the team|how would that|what did that)/i;
 const ORIGIN='https://mega-byte2600.github.io';
 const BLOCKED='I cannot verify that from my approved public sources. Please use the linked portfolio or contact Michael directly for details.';
