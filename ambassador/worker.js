@@ -1,6 +1,7 @@
 import { SOURCES } from './sources.js';
 const MODEL='@cf/zai-org/glm-4.7-flash';
 const MAX_MESSAGES=6;
+const UNVERIFIED=/\\b(championship|world series ring|mlb award|mlb contract|employed by (mlb|an? mlb|a baseball|the yankees|the dodgers)|salary|private reference|personal phone number)\\b/i;
 const FOLLOW_UP=/^(and |also |but |why |how |what about |can you |could you |does that |did that |is that |tell me more|explain|expand|elaborate|in baseball|in mlb|for a club|for the team|how would that|what did that)/i;
 const ORIGIN='https://mega-byte2600.github.io';
 const BLOCKED='I cannot verify that from my approved public sources. Please use the linked portfolio or contact Michael directly for details.';
@@ -62,6 +63,7 @@ export default {async fetch(req,env){
  const question=body?.question;
  if(typeof question!=='string'||question.trim().length<2||question.length>350)return json({error:'Question must be 2–350 characters'},400);
  const history=Array.isArray(body.history)?body.history.slice(-MAX_MESSAGES).filter(m=>m&&['user','assistant'].includes(m.role)&&typeof m.content==='string'&&m.content.length<=1000).map(m=>({role:m.role,content:m.content})):[];
+ if(UNVERIFIED.test(question))return json({answer:BLOCKED,sources:[],grounded:false,referral:referral(question)});
  const sources=selectSources(question,history);
  if(!sources.length)return json({answer:BLOCKED,sources:[],grounded:false,referral:referral(question)});
  if(!env.AI)return json({error:'AI service not configured'},503);
