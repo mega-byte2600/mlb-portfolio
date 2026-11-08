@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import worker,{selectSources} from './worker.js';
+import worker,{selectSources,referral} from './worker.js';
 import {SOURCES} from './sources.js';
 const url='https://placeholder.workers.dev/';
 const origin='https://mega-byte2600.github.io';
@@ -16,7 +16,7 @@ test('does not call inference when no source matches',async()=>{const r=await wo
 test('extracts GLM chat completion content',async()=>{
  const r=await worker.fetch(new Request(url,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({question:'What is Hardball?'})}),{AI:{run:async(_model,opts)=>{
  assert.equal(opts.chat_template_kwargs.enable_thinking,false);
- assert.equal(opts.max_completion_tokens,750);
+ assert.equal(opts.max_completion_tokens,950);
  return {choices:[{message:{content:'Hardball is a baseball analytics project [S1].',role:'assistant'}}]};
  }}});
  const d=await r.json();assert.equal(r.status,200);assert.equal(d.grounded,true);assert.match(d.answer,/analytics/);
@@ -43,7 +43,7 @@ test('citation-only responses do not create sources from unapproved ids',async()
 });
 
 test('approved evidence records have unique IDs, stable HTTPS links and explicit status',()=>{
- assert.ok(SOURCES.length>=15);
+ assert.ok(SOURCES.length>=19);
  const seen=new Set();
  for(const s of SOURCES){
    assert.match(s.id,/^S\d+$/);
@@ -52,4 +52,27 @@ test('approved evidence records have unique IDs, stable HTTPS links and explicit
    assert.ok(s.title&&s.status&&s.facts&&s.terms);
    assert.ok(!/api[_-]?key|password\s*[:=]|bearer\s+[a-z0-9]/i.test(s.facts));
  }
+});
+
+test('recruiter fallback points to an appropriate verified destination',()=>{
+ assert.match(referral('Can I inspect the code?').url,/github\.com/);
+ assert.match(referral('Where can I read his LinkedIn profile?').url,/linkedin\.com/);
+ assert.match(referral('Is the MPH degree completed?').url,/resume\.html/);
+ assert.match(referral('Can I verify a private reference?').url,/mailto:/);
+});
+test('conversational follow-up can carry the prior project context',()=>{
+ const prior=[{role:'user',content:'How did he govern Eleos AI at the county?'},{role:'assistant',content:'He evaluated privacy and risks [S10].'}];
+ const chosen=selectSources('And how would that apply to a baseball front office?',prior);
+ assert.ok(chosen.some(s=>s.id==='S10'),'county AI governance should remain retrievable');
+ assert.ok(chosen.some(s=>s.id==='S19'),'baseball transferability should be considered');
+});
+test('unknown question returns a destination but never invents an answer',async()=>{
+ const r=await send({question:'Has he won a championship with an MLB team?'});
+ const d=await r.json();assert.equal(d.grounded,false);
+ assert.ok(d.referral?.url);
+ assert.deepEqual(d.sources,[]);
+});
+test('only actually cited evidence appears in server-provided links',async()=>{
+ const r=await worker.fetch(new Request(url,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({question:'Explain Hardball and the author background'})}),{AI:{run:async()=>({response:'Hardball is a public project [S1].'})}});
+ const d=await r.json();assert.equal(d.grounded,true);assert.deepEqual(d.sources.map(s=>s.id),['S1']);
 });
