@@ -1,3 +1,3 @@
-// Add ONLY the public Cloudflare Worker endpoint after it is deployed.
-// Example: window.AMBASSADOR_API_URL = 'https://mlb-portfolio-ambassador.YOUR-SUBDOMAIN.workers.dev';
-window.AMBASSADOR_API_URL = '';
+// Public Cloudflare Worker endpoint for the MLB Portfolio AI Ambassador.
+// No credentials or secrets are included in this browser configuration.
+window.AMBASSADOR_API_URL = 'https://mlb-portfolio-ambassador.mlb-ambassador-msb.workers.dev';
