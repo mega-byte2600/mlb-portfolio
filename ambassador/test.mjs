@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import worker,{selectSources} from './worker.js';
+import {SOURCES} from './sources.js';
 const url='https://placeholder.workers.dev/';
 const origin='https://mega-byte2600.github.io';
 const send=(body,headers={})=>worker.fetch(new Request(url,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json',...headers},body:JSON.stringify(body)}),{AI:{run:async(model,options)=>{assert.match(model,/glm-4.7-flash/);assert.equal(options.messages[0].role,'system');return {response:'Hardball supports roster decisions [S1].'};}}});
@@ -39,4 +40,16 @@ test('expanded public evidence retrieves critical recruiter topics',async()=>{
 test('citation-only responses do not create sources from unapproved ids',async()=>{
  const r=await worker.fetch(new Request(url,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({question:'Hardball'})}),{AI:{run:async()=>({response:'Unsupported [S999].'})}});
  const d=await r.json();assert.equal(d.grounded,false);assert.deepEqual(d.sources,[]);
+});
+
+test('approved evidence records have unique IDs, stable HTTPS links and explicit status',()=>{
+ assert.ok(SOURCES.length>=15);
+ const seen=new Set();
+ for(const s of SOURCES){
+   assert.match(s.id,/^S\\d+$/);
+   assert.ok(!seen.has(s.id),'duplicate source ID '+s.id);seen.add(s.id);
+   assert.match(s.url,/^https:\\/\\//);
+   assert.ok(s.title&&s.status&&s.facts&&s.terms);
+   assert.ok(!/api[_-]?key|password\\s*[:=]|bearer\\s+[a-z0-9]/i.test(s.facts));
+ }
 });
