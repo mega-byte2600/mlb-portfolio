@@ -24,3 +24,19 @@ test('fails closed when reasoning model returns null content',async()=>{
  const r=await worker.fetch(new Request(url,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({question:'Hardball'})}),{AI:{run:async()=>({choices:[{message:{content:null,reasoning_content:'private reasoning'}}]})}});
  assert.equal(r.status,502);assert.equal((await r.json()).error,'Empty AI response');
 });
+
+test('expanded public evidence retrieves critical recruiter topics',async()=>{
+ for(const [q,id] of [
+ ['How did Michael govern Eleos AI at the county?','S10'],
+ ['What did Michael do for CDC Windows endpoints?','S11'],
+ ['What was his experience with Auris robotic surgery?','S12'],
+ ['Is Michael a Dartmouth MPH graduate or candidate?','S13'],
+ ['What is his LinkedIn professional profile?','S8'],
+ ['Does he speak Brazilian Portuguese?','S14'],
+ ['What is his Emporion financial research project?','S15']
+ ]) assert.equal(selectSources(q)[0]?.id,id,q);
+});
+test('citation-only responses do not create sources from unapproved ids',async()=>{
+ const r=await worker.fetch(new Request(url,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({question:'Hardball'})}),{AI:{run:async()=>({response:'Unsupported [S999].'})}});
+ const d=await r.json();assert.equal(d.grounded,false);assert.deepEqual(d.sources,[]);
+});
