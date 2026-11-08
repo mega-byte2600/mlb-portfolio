@@ -15,6 +15,14 @@ function append(message,klass,sources=[]){
  log.appendChild(div);log.scrollTop=log.scrollHeight;
 }
 function status(message){if(note)note.textContent=message}
+function showReferral(referral){
+ if(!referral||typeof referral.url!=='string'||typeof referral.label!=='string')return;
+ const url=referral.url;
+ const approved=url.startsWith('https://github.com/mega-byte2600')||url.startsWith('https://www.linkedin.com/in/bolton-2600/')||url.startsWith('https://mega-byte2600.github.io/mlb-portfolio/')||url.startsWith('mailto:michael.bolton.ph@dartmouth.edu');
+ if(!approved)return;
+ const box=document.createElement('div');box.className='bubble bot';
+ const a=document.createElement('a');a.href=url;a.textContent=referral.label+' ↗';a.rel='noopener noreferrer';a.target='_blank';box.append(a);log.append(box);log.scrollTop=log.scrollHeight;
+}
 async function reply(q){if(!q.trim()||submit.disabled)return;
  if(!endpoint){status('The AI service is not deployed yet. This demo does not fabricate answers.');return}
  append(q,'user');submit.disabled=true;input.disabled=true;status('Checking approved evidence…');
@@ -23,8 +31,9 @@ async function reply(q){if(!q.trim()||submit.disabled)return;
  if(!response.ok)throw new Error(`Service unavailable (${response.status})`);
  const data=await response.json();if(typeof data.answer!=='string')throw Error('Invalid service response');
  append(data.answer,'bot',Array.isArray(data.sources)?data.sources:[]);
+ if(!data.grounded&&data.referral)showReferral(data.referral);
  history.push({role:'user',content:q},{role:'assistant',content:data.answer});while(history.length>6)history.shift();
- status(data.grounded?'Answers are generated from approved source excerpts. Verify claims using the linked evidence.':'No approved source matched this question.');
+ status(data.grounded?'AI-generated synthesis; check cited evidence before relying on any claim.':'I could not verify this in approved evidence. Follow the suggested next step.');
  }catch(err){append('The AI Ambassador is temporarily unavailable. Please use the evidence ledger or contact Michael directly.','bot');status(String(err.message||err))}
  finally{submit.disabled=false;input.disabled=false;input.focus()}
 }
