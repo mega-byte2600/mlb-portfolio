@@ -19,8 +19,8 @@ assert.match(html,/https:\/\/mega-byte2600\.github\.io\/hardball\/dashboard\//);
 assert.match(html,/approximately \$250,000 in annual labor-capacity cost avoidance/);
 assert.match(html,/final scoreboard not retained/);
 assert.match(html,/not a deployed MLB program/);
-assert.match(js,/deterministic/);
-assert.match(js,/No external API calls|does not send messages to a server/);
+assert.match(js,/fetch\(endpoint/);
+assert.match(js,/window\.AMBASSADOR_API_URL/);
 assert.match(css,/prefers-reduced-motion/);
 assert.match(html,/Skip to content/);
 assert.doesNotMatch(html,/api[_-]?key|sk-proj-|ghp_/i);
@@ -36,7 +36,16 @@ for(const href of [...html.matchAll(/href="([^"]+)"/g)].map(m=>m[1])) {
   if(!href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) assert.ok(fs.existsSync(path.join(root,href.split('#')[0])), 'broken local link '+href);
 }
 console.log('PASS: local links, mobile navigation, claim register and provenance safeguards');
+
 assert.match(html,/href="resume.html"/);
 assert.match(html,/mailto:michael.bolton.ph@dartmouth.edu/);
-assert.match(read('resume.html'),/Print \/ Save as PDF/);
-console.log('PASS: recruiter resume and contact endpoints');
+assert.match(read("resume.html"),/Print \/ Save as PDF/);
+console.log("PASS: recruiter résumé and contact endpoints");
+
+assert.match(html,/AI Ambassador/);
+assert.match(html,/ambassador-config\.js/);
+assert.ok(fs.existsSync(path.join(root,'ambassador/worker.js')));
+assert.ok(fs.existsSync(path.join(root,'ambassador/sources.js')));
+assert.ok(fs.existsSync(path.join(root,'ambassador/wrangler.toml')));
+assert.doesNotMatch(read('ambassador-config.js'),/sk-[A-Za-z0-9]{12,}/);
+console.log('PASS: AI Ambassador integration and source boundaries');

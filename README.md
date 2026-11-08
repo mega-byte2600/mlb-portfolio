@@ -62,3 +62,19 @@ This is **prototype v0.3**: static automated checks are not a substitute for vis
 - Added linked evidence ledger separating public demonstrations, restricted records, firsthand accounts and unimplemented proposals.
 - Strengthened local link and mobile navigation smoke checks.
 - No production deployment and no changes to other repositories.
+
+## Real AI Ambassador: Cloudflare Workers AI (open-weight model)
+
+The static portfolio is served on GitHub Pages. **AI chat requires a separate Cloudflare Worker**. No Nous subscription, vector database, Replit, Node server, or client-side API secret is required. The Worker uses the Cloudflare AI binding and `@cf/zai-org/glm-4.7-flash`, a currently supported open-weight multilingual model.
+
+**To deploy the Worker when Cloudflare access is available:**
+
+1. Sign into a Cloudflare account with Workers AI enabled. The documented free AI usage allocation is 10,000 neurons per day, subject to Cloudflare plan limits. No promise of unlimited free usage.
+2. From the `ambassador` directory, run `npx wrangler login` and `npx wrangler deploy`. The `wrangler.toml` already includes the model AI binding; no API key goes in the browser or repository.
+3. Copy the resulting public `https://mlb-portfolio-ambassador.<subdomain>.workers.dev` endpoint into the single line in `ambassador-config.js` and commit that change. This is **not a secret**.
+4. Enable GitHub Pages in the `mlb-portfolio` repository's Settings → Pages by publishing the `main` branch from the repository root. Confirm both the page and Worker endpoint are reachable.
+5. Run `node --test ambassador/test.mjs` and `node tests/smoke.test.js`. Perform real-model adversarial evaluations and mobile-browser QA after deployment; mocks do not prove a model's actual reliability.
+
+The public evidence library is maintained in `ambassador/sources.js`. It is a hand-curated allowlist; restricted files and private resume data are excluded. Only selected excerpts enter the prompt. Each answer must include a matching citation marker and the server provides the link and status. **This reduces risk but does not mathematically guarantee truthfulness; a language model may still misstate the curated context.** Test representative recruiter questions and prompt-injection cases before inviting real recruiters. Unknown topics are declined; personal or confidential information should not be sent. Visitors' messages are transmitted to Cloudflare Workers AI when the backend is enabled, not retained by this app intentionally.
+
+**Deployment status:** the frontend remains in an explicit disabled state until `ambassador-config.js` contains a verified Worker URL. Never describe the chat as live before that point.

@@ -1,17 +1,33 @@
 'use strict';
-// The portfolio evidence guide is deliberately deterministic. It is NOT an LLM,
-// does not send messages to a server, and does not accept private source uploads.
-const EVIDENCE = [
-  {terms:['hardball','baseball','roster','model','dashboard','projection','stats'],answer:'Hardball is Michael S. Bolton’s public baseball decision-support research dashboard. It brings together performance, availability, payroll, free-agent context, validation and scenario analysis. It is not a promise of predicted wins, and observational associations do not establish causation.\n\nSource: live dashboard and repository.',links:[['Open Hardball','https://mega-byte2600.github.io/hardball/dashboard/'],['Inspect repository','https://github.com/mega-byte2600/hardball']]},
-  {terms:['2018','vision','object','computer vision','ai experience','machine learning','detection'],answer:'A dated September 14, 2018 recording demonstrates a Google Cloud object-detection API workflow, with command-line activity and an application interface. It supports hands-on application and API-integration experience, not a claim that Michael trained Google’s underlying vision model.\n\nSource: original recorded demonstration.',links:[['Watch the 2018 recording','https://drive.google.com/file/d/1p0Scec2YtVZegy0uyl70-rC7NMMJJ3Bs/view']]},
-  {terms:['player','players first','pfac','patient','family','culture','spanish','portuguese','french'],answer:'Players First is a proposed baseball operating philosophy: listen directly to players, include their perspectives in decisions, respect informed autonomy, and learn from outcomes. The approach draws on completed public-health patient-and-family engagement work, but no MLB player-advisory implementation is claimed. Michael reports fluency in English, Spanish, Brazilian Portuguese, and French, and Spanish medical interpreting through Stanford’s SCOPE program in 2008–2010.\n\nStatus: professional experience and proposed baseball application are distinct.',links:[['PFAC Toolkit','https://pfactoolkit.org/']]},
-  {terms:['abbott','rt5','cost','250','lean','six sigma','maintenance'],answer:'At Abbott Toxicology, Michael developed an open-source equipment-maintenance workflow at the Santa Rosa site. Estimated annual labor-capacity cost avoidance was approximately $250,000. This is an estimate of capacity value, not proof of cash savings or completed deployment at other sites.\n\nStatus: firsthand project documentation; confidential employer slides are not distributed here.',links:[]},
-  {terms:['mba','strategy','simulation','wyoming','first place','business game'],answer:'In University of Wyoming MBA Strategic Management (Summer 2023), Michael participated in a head-to-head company simulation. He reports his team finished first among approximately 14 competitors, using premium differentiation, competitive monitoring and timed private-label decisions. The course syllabus establishes the competition; the final ranking is firsthand-reported because the scoreboard was not retained.\n\nStatus: course documented; ranking self-reported.',links:[]},
-  {terms:['deloitte','irs','cloud','kubernetes','docker','deployment'],answer:'At Deloitte, Michael contributed to public-sector cloud modernization and delivery, including containerization, AWS work and integrations. An IRS modernization effort documented an approximate 85% reduction in deployment time. This does not mean taxpayer payment time dropped 85%.\n\nStatus: project outcome from career evidence; client materials remain restricted.',links:[]}
-];
+// Real multi-turn AI client. Never embeds model tokens, evidence docs, or a mock answer engine.
+// Configure endpoint in ambassador-config.js after deploying the Cloudflare Worker.
+const endpoint=window.AMBASSADOR_API_URL||'';
 const form=document.getElementById('ask-form');
 const input=document.getElementById('ask-input');
 const log=document.getElementById('chat-log');
-function append(message,klass,links=[]){const div=document.createElement('div');div.className='bubble '+klass;div.textContent=message;for(const [label,url] of links){div.appendChild(document.createElement('br'));const a=document.createElement('a');a.textContent=label+' ↗';a.href=url;a.target='_blank';a.rel='noopener noreferrer';div.appendChild(a)}log.appendChild(div);log.scrollTop=log.scrollHeight;}
-function reply(q){if(!q.trim())return;append(q,'user');const text=q.toLowerCase();const match=EVIDENCE.map(e=>({e,score:e.terms.reduce((sum,t)=>sum+(text.includes(t)?t.length:0),0)})).sort((a,b)=>b.score-a.score)[0];if(match&&match.score>0)append(match.e.answer,'bot',match.e.links);else append('I do not have a verified answer for that question in this prototype. Please use the linked source projects rather than treating an invented response as fact. The production ambassador will require an approved knowledge base, citations, privacy controls and evaluation before launch.','bot');}
-form.addEventListener('submit',event=>{event.preventDefault();reply(input.value);input.value='';input.focus()});document.querySelectorAll('[data-question]').forEach(b=>b.addEventListener('click',()=>reply(b.dataset.question)));
+const note=document.querySelector('.chat-note');
+const history=[];
+const submit=form.querySelector('button[type="submit"]');
+function append(message,klass,sources=[]){
+ const div=document.createElement('div');div.className='bubble '+klass;div.textContent=message;
+ if(sources.length){const list=document.createElement('div');list.className='source-list';const title=document.createElement('strong');title.textContent='Evidence consulted';list.append(title);
+ for(const s of sources){const a=document.createElement('a');a.textContent=`[${s.id}] ${s.title} ↗`;a.href=s.url;a.target='_blank';a.rel='noopener noreferrer';list.append(a);}div.appendChild(list)}
+ log.appendChild(div);log.scrollTop=log.scrollHeight;
+}
+function status(message){if(note)note.textContent=message}
+async function reply(q){if(!q.trim()||submit.disabled)return;
+ if(!endpoint){status('The AI service is not deployed yet. This demo does not fabricate answers.');return}
+ append(q,'user');submit.disabled=true;input.disabled=true;status('Checking approved evidence…');
+ try{
+ const response=await fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q,history:history.slice(-6)})});
+ if(!response.ok)throw new Error(`Service unavailable (${response.status})`);
+ const data=await response.json();if(typeof data.answer!=='string')throw Error('Invalid service response');
+ append(data.answer,'bot',Array.isArray(data.sources)?data.sources:[]);
+ history.push({role:'user',content:q},{role:'assistant',content:data.answer});while(history.length>6)history.shift();
+ status(data.grounded?'Answers are generated from approved source excerpts. Verify claims using the linked evidence.':'No approved source matched this question.');
+ }catch(err){append('The AI Ambassador is temporarily unavailable. Please use the evidence ledger or contact Michael directly.','bot');status(String(err.message||err))}
+ finally{submit.disabled=false;input.disabled=false;input.focus()}
+}
+form.addEventListener('submit',event=>{event.preventDefault();const q=input.value.trim();input.value='';reply(q)});
+document.querySelectorAll('[data-question]').forEach(b=>b.addEventListener('click',()=>reply(b.dataset.question)));
+if(!endpoint){submit.disabled=true;input.disabled=true;input.placeholder='AI Ambassador awaiting free Worker deployment';status('AI service not deployed. No simulated or keyword-only answers.');}

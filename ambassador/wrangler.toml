@@ -1,0 +1,6 @@
+name = "mlb-portfolio-ambassador"
+main = "worker.js"
+compatibility_date = "2026-11-08"
+
+[ai]
+binding = "AI"
