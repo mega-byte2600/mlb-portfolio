@@ -4,7 +4,7 @@ const MAX_MESSAGES=6;
 const ORIGIN='https://mega-byte2600.github.io';
 const BLOCKED='I cannot verify that from my approved public sources. Please use the linked portfolio or contact Michael directly for details.';
 const STOP=new Set(['the','and','for','with','what','how','about','does','did','was','are','can','you','his','her','their','tell','me','more','some','would','could','please','michael','bolton','that','this','from','into','your','work','project','experience','background','skill','skills']);
-const tokenise=s=>(s.toLowerCase().match(/[\\p{L}\\p{N}]+/gu)||[]).filter(w=>w.length>=3&&!STOP.has(w));
+const tokenise=s=>(s.toLowerCase().match(/[\p{L}\p{N}]+/gu)||[]).filter(w=>w.length>=3&&!STOP.has(w));
 const ALIASES=Object.freeze({
  'risk management':'eleos governance risk register ai policy nist privacy security',
  'responsible ai':'eleos governance ai policy audit oversight privacy',
@@ -76,7 +76,9 @@ export default {async fetch(req,env){
  // Citations are supplied by the server regardless of model-generated links.
  // Model citations not in retrieval set are stripped to avoid fabricated provenance.
  const allowed=new Set(sources.map(s=>s.id));answer=answer.replace(/\[S\d+\]/g,id=>allowed.has(id.slice(1,-1))?id:'');
- if(!/\[S\d+\]/.test(answer))return json({answer:BLOCKED,sources:[],grounded:false});
+ const cited=[...new Set([...answer.matchAll(/\[S\d+\]/g)].map(m=>m[0].slice(1,-1)))];
+ if(!cited.length)return json({answer:BLOCKED,sources:[],grounded:false,referral:referral(question)});
+ const used=sources.filter(s=>cited.includes(s.id));
  return json({answer:answer.slice(0,2200),sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Workers AI'});
  }};
 export {selectSources,tokenise,referral};
