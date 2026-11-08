@@ -33,6 +33,10 @@ assert.match(ledger,/confidential and intentionally excluded/);
 assert.match(ledger,/not been implemented or endorsed/);
 assert.match(css,/@media\(max-width:760px\)\{\.site-header\{height:auto/);
 for(const href of [...html.matchAll(/href="([^"]+)"/g)].map(m=>m[1])) {
-  if(!href.startsWith('http') && !href.startsWith('#')) assert.ok(fs.existsSync(path.join(root,href.split('#')[0])), 'broken local link '+href);
+  if(!href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) assert.ok(fs.existsSync(path.join(root,href.split('#')[0])), 'broken local link '+href);
 }
 console.log('PASS: local links, mobile navigation, claim register and provenance safeguards');
+assert.match(html,/href="resume.html"/);
+assert.match(html,/mailto:michael.bolton.ph@dartmouth.edu/);
+assert.match(read('resume.html'),/Print \/ Save as PDF/);
+console.log('PASS: recruiter resume and contact endpoints');
