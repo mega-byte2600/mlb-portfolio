@@ -109,8 +109,8 @@ test('valid citation cannot launder a fabricated result',async()=>{
 });
 test('valid citation never releases a free-form invented employer claim',async()=>{
  const r=await worker.fetch(new Request(url,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({question:'What has Michael built at Hardball?'})}),{RATE_LIMITER:limiter,AI:{run:async()=>({response:'Michael worked for the Yankees for 5 years [S1].'})}});
- const d=await r.json();assert.equal(d.grounded,true);assert.doesNotMatch(d.answer,/worked for the Yankees/);
- assert.equal(d.sources[0].id,'S1');
+ const d=await r.json();assert.equal(d.grounded,false);assert.doesNotMatch(d.answer,/worked for the Yankees/);
+ assert.deepEqual(d.sources,[]);
 });
 test('rate-limited visitor gets 429 without model call',async()=>{
  const r=await worker.fetch(new Request(url,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({question:'What is Hardball?'})}),{RATE_LIMITER:{limit:async()=>({success:false})},AI:{run:async()=>{throw Error('must not call model')}}});
