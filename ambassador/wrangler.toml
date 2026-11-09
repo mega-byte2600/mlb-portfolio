@@ -4,3 +4,15 @@ compatibility_date = "2026-11-08"
 
 [ai]
 binding = "AI"
+
+# Approximate rate limit per Cloudflare data center; guards free AI quota.
+[[ratelimits]]
+name = "RATE_LIMITER"
+namespace_id = "26001"
+[ratelimits.simple]
+limit = 30
+period = 60
+
+# No application request/chat logging.
+[observability]
+enabled = false
