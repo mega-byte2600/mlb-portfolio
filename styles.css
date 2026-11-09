@@ -7,3 +7,11 @@
 .ledger-main{max-width:1150px;margin:auto;padding:90px clamp(22px,6vw,80px) 110px}.ledger-main h1{font:400 clamp(56px,7vw,92px)/1 var(--serif);letter-spacing:-.055em;margin:20px 0 28px}.ledger-main>.lead{max-width:820px;color:#4d5a5c}.ledger-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:50px 0}.ledger-grid article{background:white;border:1px solid #ced8d1;padding:28px;min-width:0}.ledger-grid h2{font:400 30px/1.2 var(--serif);margin:13px 0}.ledger-grid p{font-size:14px;color:#4b5c5d}.ledger-grid a{color:#235b5b;text-decoration:underline;text-underline-offset:3px}.ledger-tag{font-size:10px;font-weight:850;letter-spacing:.12em;color:#42625b}.ledger-guardrail{font-size:13px;color:#536369;max-width:850px;margin-bottom:30px}@media(max-width:700px){.ledger-grid{grid-template-columns:1fr}.ledger-main{padding-top:56px}.ledger-grid article{padding:22px}}
 /* AI Ambassador: citations and accessible disabled state */
 .source-list{border-top:1px solid #c6d8ce;margin-top:12px;padding-top:10px;display:flex;flex-direction:column;gap:7px;font-size:11px;white-space:normal}.source-list strong{font-size:10px;letter-spacing:.08em;text-transform:uppercase}.source-list a{overflow-wrap:anywhere}.ask-form button:disabled{opacity:.55;cursor:not-allowed}.ask-form input:disabled{background:#f0f1ee;cursor:not-allowed}.chat-log .bubble{overflow-wrap:anywhere}
+
+/* Role-specific first-screen proof: compact, keyboard accessible, no layout regressions. */
+.role-proof{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:1510px;margin:38px auto 0}
+.role-proof article{border:1px solid #4b6369;padding:20px 22px;min-width:0;background:#10242c}
+.role-proof strong{font-size:10px;color:var(--mint);letter-spacing:.12em}
+.role-proof p{font-size:13px;line-height:1.55;color:#e0e8e3;margin:10px 0 0}
+.role-proof a{text-decoration:underline;text-underline-offset:3px;color:#f1f7dc}
+@media(max-width:850px){.role-proof{grid-template-columns:1fr;gap:10px;margin-top:24px}.role-proof article{padding:14px 18px}}
