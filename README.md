@@ -9,15 +9,15 @@ Independent, MLB-focused visual résumé and real AI Ambassador built for the **
 - **Public site:** GitHub Pages from `main` root. Expected address: https://mega-byte2600.github.io/mlb-portfolio/
 - **Backend:** Cloudflare Worker `ambassador/worker.js`, using Workers AI `@cf/zai-org/glm-4.7-flash`.
 - **Worker URL:** https://mlb-portfolio-ambassador.mlb-ambassador-msb.workers.dev
-- **Evidence:** 26 curated, provenance-labeled public summaries in `ambassador/sources.js`; human-reviewed claims, self-reported outcomes and proposed work must remain distinguished.
-- **Recruiter actions:** email, LinkedIn, GitHub, evidence ledger, and `Michael_S_Bolton_Baseball_RD_Resume.pdf` (public, role-targeted downloadable PDF).
-- **Browser chat:** `app.js`, four suggested recruiter questions, multi-turn context and cited source links. No credentials in client code, no browser-side AI calls or fabricated demo answers.
+- **Evidence:** 29 curated, provenance-labeled public summaries in `ambassador/sources.js`; human-reviewed claims, self-reported outcomes and proposed work must remain distinguished.
+- **Recruiter actions:** email, LinkedIn, GitHub, evidence ledger, and the exact supplied `Michael_Bolton_Resume_Nov_2026.pdf`.
+- **Browser chat:** `app.js`, suggested recruiter questions, multi-turn context, cited source links and bounded agentic action proposals. The browser can open allowlisted public resources or prepare an email draft; it cannot send email, access credentials or browse arbitrary URLs.
 - **Safety:** Worker refuses unsupported/sensitive topics and prompt injections, uses Cloudflare-native approximate rate limiter, and returns curated source facts instead of publishing unrestricted model prose. Cloudflare persisted Worker logs disabled in `wrangler.toml`. External provider data handling is governed by provider terms.
 - **Privacy:** no home address, telephone number, confidential employer documents, protected health or player data, private chats or access tokens in the public knowledge library.
 
 ## Setup and deploy
 
-A previous deployment returned a real model response (user screenshot), but the **latest security and retrieval changes have not yet been independently verified live**. GitHub commits do not automatically update Cloudflare.
+Cloudflare Workers Builds is connected to the GitHub `main` branch and deploys the Worker with `ambassador/wrangler.toml` after a production commit. Live verification remains a release requirement.
 
 For Cloudflare in the existing local `ambassador` directory:
 
@@ -42,12 +42,11 @@ node ambassador/stress.mjs
 node ambassador/interview-simulations.mjs
 ```
 
-- 24 backend regression cases passed in an in-session execution harness on November 8, 2026.
-- A/B/C interview evaluation: 69 structured HR/MBA, common recruiter, strengths and security scenarios, plus five phrasing variants each; **95/95 in-session automated assertions passed** across Worker and interview suites.
+- A/B/C interview evaluation: 69 structured HR/MBA, common recruiter, strengths and security scenarios, plus phrasing variants; the current local release gate includes **101 passing tests**, including distinct motivation, priorities, conflict and bounded-action cases.
 - **10,000,000 seeded draws** passed across 345 previously validated question variants; **250,000 actual source selection/refusal calls** separately passed. See [interview simulation results](ambassador/INTERVIEW_SIMULATION_RESULTS.json) and [methodology](ambassador/INTERVIEW_METHOD.md). These are simulated checks, not model training or 10M live prompts.
 - The professional headshot remains LinkedIn-only; it is not embedded as a portfolio portrait or AI avatar.
 - One million deterministic retrieval checks across 27 repeated templates passed after indexed retrieval and relevance threshold improvements; see [ambassador/STRESS_RESULTS.json](ambassador/STRESS_RESULTS.json).
-- These tests do **not** mean one million unique questions, live-model evaluations or trained model weights. Formal Node CI, mobile visual review, browser keyboard checks and end-to-end Cloudflare evaluation must be separately verified.
+- These tests do **not** mean one million unique questions, live-model evaluations or trained model weights. Formal Node CI, mobile visual review, browser keyboard checks and end-to-end Cloudflare evaluation remain separate release checks.
 - Safety contract: exact refusal `I don't have verified information about that.` for unsupported preferences and injected requests; do not assert MLB affiliation, unauthorized credentials, player statistics or unverified employment.
 
 ## What remains
