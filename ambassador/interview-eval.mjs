@@ -86,10 +86,11 @@ test('interpersonal conflict and competing priorities remain distinct',async()=>
  const priorities=await (await worker.fetch(mkRequest('How do you manage conflicting priorities?'),fakeEnv('unused'))).json();
  assert.equal(conflict.model,'Curated evidence synthesis');
  assert.equal(priorities.model,'Curated evidence synthesis');
- assert.match(conflict.answer,/listening carefully/);
+ assert.match(conflict.answer,/Individualization/);
+ assert.match(conflict.answer,/Venn diagram/);
  assert.match(priorities.answer,/Eisenhower style/);
  assert.notEqual(conflict.answer,priorities.answer);
- assert.deepEqual(conflict.sources.map(s=>s.id),['S23']);
+ assert.deepEqual(conflict.sources.map(s=>s.id),['S29']);
  assert.deepEqual(priorities.sources.map(s=>s.id),['S23']);
 });
 
