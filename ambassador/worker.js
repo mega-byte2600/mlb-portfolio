@@ -38,18 +38,23 @@ function referral(question){
 }
 function expand(s){let out=s.toLowerCase();for(const [key,terms] of Object.entries(ALIASES))if(out.includes(key))out+=' '+terms;return out;}
 function selectSources(question,history=[]){
- const q=expand(question); const qwords=new Set(tokenise(q));
- const recent=history.slice(-4).filter(m=>m.role==='user').slice(-2).map(m=>m.content).join(' ');
- const context=new Set(tokenise(expand(recent)));
- const isFollowup=FOLLOW_UP.test(question.trim()) || /\b(that|those|this|it|they|them|previous|earlier)\b/i.test(question);
- const scored=SOURCES.map(source=>{
-  const terms=new Set(tokenise(source.terms+' '+source.title));
-  const direct=[...qwords].reduce((n,w)=>n+(terms.has(w)?1:0),0);
-  const past=[...context].reduce((n,w)=>n+(terms.has(w)?1:0),0);
-  return {source,score:direct*3+(isFollowup?past*2:Math.min(past,2)),direct,past};
- }).filter(x=>x.direct>0||(isFollowup&&x.past>0)).sort((a,b)=>b.score-a.score||a.source.id.localeCompare(b.source.id,undefined,{numeric:true}));
- if(!scored.length&&/^(hi|hello|hey|who is he|who is michael|introduce|overview|background)/i.test(question.trim()))return [SOURCES.find(s=>s.id==='S6')];
- return scored.slice(0,4).map(x=>x.source);
+ const qwords=new Set(tokenise(expand(question)));
+ const previous=history.filter(m=>m.role==='user').slice(-1)[0]?.content||'';
+ const priorWords=new Set(tokenise(expand(previous)));
+ const isFollowup=Boolean(previous)&&(FOLLOW_UP.test(question.trim())||/\b(that|those|this|it|they|them|previous|earlier)\b/i.test(question));
+ const rank=(words)=>SOURCES.map(source=>{
+   const terms=new Set(tokenise(source.terms+' '+source.title));
+   return {source,score:[...words].reduce((n,w)=>n+(terms.has(w)?1:0),0)};
+ }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score||a.source.id.localeCompare(b.source.id,undefined,{numeric:true}));
+ const direct=rank(qwords).map(x=>x.source);
+ if(isFollowup){
+   // Carry the two most relevant sources from the most recent user question
+   // before adding current-question context; never assume earlier assistant text is evidence.
+   const carried=rank(priorWords).slice(0,2).map(x=>x.source);
+   return [...new Map([...carried,...direct].map(s=>[s.id,s])).values()].slice(0,4);
+ }
+ if(!direct.length&&/^(hi|hello|hey|who is he|who is michael|introduce|overview|background)/i.test(question.trim()))return [SOURCES.find(s=>s.id==='S6')];
+ return direct.slice(0,4);
 }
 function json(data,status=200,origin=ORIGIN){return new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json; charset=utf-8','access-control-allow-origin':origin,'vary':'Origin','cache-control':'no-store','x-content-type-options':'nosniff','access-control-allow-methods':'POST, OPTIONS','access-control-allow-headers':'Content-Type'}})}
 export default {async fetch(req,env){
