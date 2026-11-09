@@ -83,6 +83,8 @@ const INTERVIEW_INTENTS=[
 
 // Explicitly named employers/projects outrank generic interview framing.
 const ENTITY_PRIORITY=[
+ {re:/\bhardball\b/i,ids:['S27','S1']},
+ {re:/\b(players first|player wellbeing|players? (health|families|welfare)|why (mlb|baseball)|athletes? (as|are) people|commodit(y|ies)|mission)\b/i,ids:['S28','S4']},
  {re:/\babbott\b/i,ids:['S17','S5']},
  {re:/\bnavy\b/i,ids:['S6','S20']},
  {re:/\bcdc\b/i,ids:['S11']},
@@ -95,6 +97,8 @@ const ENTITY_PRIORITY=[
  {re:/\bcliftonstrengths\b/i,ids:['S21']}
 ];
 const INTERVIEW_ADDITIONAL_INTENTS=[
+ {re:/\b(what is hardball|why does hardball matter|what does hardball (do|not do)|hardball limits|hardball limitations)\b/i,ids:['S27','S1']},
+ {re:/\b(why (mlb|baseball)|why are players (more than|not) assets|what is your mission|what is michael.s mission|how does healthcare (relate|apply) to baseball|whole person player)\b/i,ids:['S28','S4']},
  {re:/\b(verify.{0,30}improvement.{0,20}sustain|improvement (was|is|remains) sustained|sustain(ed|able) improvement)\b/i,ids:['S17']},
  {re:/\b(walk me through (your|his|the) (resume|résumé)|resume walkthrough|career walkthrough)(?=\W|$)/i,ids:['S6','S13']},
  {re:/\b(professional accomplishment.{0,20}measurable|measurable professional accomplishment)\b/i,ids:['S5','S17']},
