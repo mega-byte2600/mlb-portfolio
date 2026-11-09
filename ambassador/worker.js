@@ -83,7 +83,7 @@ const INTERVIEW_INTENTS=[
 
 const INTERVIEW_ADDITIONAL_INTENTS=[
  {re:/\b(verify.{0,30}improvement.{0,20}sustain|improvement (was|is|remains) sustained|sustain(ed|able) improvement)\b/i,ids:['S17']},
- {re:/\b(walk me through (your|his|the) (resume|résumé)|resume walkthrough|career walkthrough)\b/i,ids:['S6','S13']},
+ {re:/\b(walk me through (your|his|the) (resume|résumé)|resume walkthrough|career walkthrough)(?=\W|$)/i,ids:['S6','S13']},
  {re:/\b(professional accomplishment.{0,20}measurable|measurable professional accomplishment)\b/i,ids:['S5','S17']},
  {re:/\b(work did (you|he) lead at the county|led (at|in) (the )?county)\b/i,ids:['S10']},
  {re:/\b(unsure of an answer|uncertain of an answer|don't know an answer|do not know an answer)\b/i,ids:['S23','S19']},
