@@ -50,6 +50,38 @@ function referral(question){
  return REFERRALS.contact;
 }
 function expand(s){let out=s.toLowerCase();for(const [key,terms] of Object.entries(ALIASES))if(out.includes(key))out+=' '+terms;return out;}
+
+/* Curated interview-intent routing: shared behavior questions lack project keywords.
+   These patterns select SOURCE IDs, never generate facts or infer personality. */
+const INTERVIEW_INTENTS=[
+ {re:/\b(tell me about yourself|walk me through (your|his|the) (resume|résumé)|professional summary|career overview)\b/i,ids:['S6','S19','S13']},
+ {re:/\b(greatest|top|biggest|main|core) strengths?\b|\bcliftonstrengths?\b|\bstrengthsfinder\b/i,ids:['S21','S23']},
+ {re:/\brestorative\b|\bbelief theme\b|\bindividualization\b|\blearner (theme|strength)\b|\bresponsibility (guide|theme|strength)\b/i,ids:['S21']},
+ {re:/\b(late to work without|without notifying|unannounced lateness|no.call.no.show)\b/i,ids:['S22']},
+ {re:/\b(competing (projects|deadlines|priorities)|prioriti[sz](e|ation)|disagree about priorities|eisenhower matrix)\b/i,ids:['S23']},
+ {re:/\b(led (a|the)? ?team|lead a team|leadership example|led something|where (have|has) (you|he) led|influenc(e|ed|ing) (people|others)|without formal authority|distributed (teams|locations)|coordinate teams)\b/i,ids:['S16','S23']},
+ {re:/\b(process you improved|process improvement|measured the result|measurable (improvement|impact|change|accomplishment)|operational impact|sustained improvement|sustain an improvement)\b/i,ids:['S17','S5','S11']},
+ {re:/\b(manage organizational risk|identify.{0,30}risk|evaluat(e|ed).{0,30}risk|ethical use of ai|ethical dilemma|ai governance|privacy (risk|controls))\b/i,ids:['S10','S23']},
+ {re:/\b(technical implementation|implementation you owned|implemented (a|the) system|led at the county)\b/i,ids:['S10']},
+ {re:/\b(imperfect (data|evidence)|uncertain(ty)? (in|about) (data|evidence)|disagree with (the )?data|decision.suppor(t|ting)|quantitative evidence)\b/i,ids:['S19','S1']},
+ {re:/\b(quieter stakeholders?|stakeholders? (are )?heard|cultural perspective|different cultures|cultural humility)\b/i,ids:['S4','S14']},
+ {re:/\b(learning a difficult|learn a (new|difficult) technology|learner influence|keep learning|motivates? (you|him) to learn)\b/i,ids:['S21','S3','S16']},
+ {re:/\b(organizational change|introduce a new model|change management|approach to (organizational )?change)\b/i,ids:['S23','S18','S19']},
+ {re:/\b(balanc(e|ed|ing) speed|quality and safety|medical device validation)\b/i,ids:['S12','S10']},
+ {re:/\b(why (do|does|should) (we|you|a club)|fit (for|this|the) (role|job|position)|different from other applicants|baseball (club|front office).{0,45}(contribute|role|fit)|what makes (you|him) different)\b/i,ids:['S19','S1','S4']},
+ {re:/\b(technical project.{0,30}proud|project (you|he) (are|is) proud|develop(ed|ing)? hardball)\b/i,ids:['S1','S2']},
+ {re:/\b(underlying code|source code|inspect.{0,15}code|see the code)\b/i,ids:['S2']},
+ {re:/\b(what (work|did).{0,15}(county|slo)|work.{0,20}county)\b/i,ids:['S10']},
+ {re:/\b(athletic background|sports background|competitive sports)\b/i,ids:['S20']},
+ {re:/\b(education.{0,30}(quantitative|decision)|degree.{0,20}(quantitative|decision)|education support)\b/i,ids:['S13']},
+ {re:/\b(personal (work|professional) standard|what (do|does) (you|he) do when (unsure|uncertain)|unexpected failure|respond to failure)\b/i,ids:['S23','S21']},
+ {re:/\b(computer vision|object detection|google vision api)\b/i,ids:['S3','S12']},
+ {re:/\b(machine learning experience|ai\/ml experience|ai project experience|technical leadership.{0,30}(years|decade))\b/i,ids:['S24','S3']},
+ {re:/\b(what (can|could) (you|he) contribute.{0,40}(baseball|club)|without professional playing)\b/i,ids:['S19','S20']},
+ {re:/\b(mba (strategy|simulation)|wyoming strategy)\b/i,ids:['S5','S13']}
+];
+const REFUSE_UNVERIFIED=/\b(biggest career failure|biggest failure|difficult conflict with (a|his|my|the) manager|why (did|has) (he|you) leave (each|your|his)|reason(s)? for leaving (each|previous)|salary (expect|want|require)|expected compensation|relocat(e|ion|ing)|when (are|is) (you|he) available to start|available to start|introvert(ed)?|extrovert(ed)?|personality diagnosis|clinical personality|makes (you|him) angry|angry at work|always arrive (at work )?exactly on time|ever been late (to work)?|favorite childhood pet|home address|private mobile|personal (phone|mobile))\b/i;
+
 const INDEX=SOURCES.map(source=>({source,terms:new Set(tokenise(source.terms+' '+source.title))}));
 const ANCHORS=new Set(['hardball','pfac','eleos','abbott','deloitte','cdc','auris','emporion','linkedin','wyoming','dartmouth','rt5','navy','bds','sabr','gcp']);
 function rankSources(words){
@@ -66,7 +98,9 @@ function selectSources(question,history=[]){
  const previous=history.filter(m=>m.role==='user').slice(-1)[0]?.content||'';
  const priorWords=new Set(tokenise(expand(previous)));
  const isFollowup=Boolean(previous)&&(FOLLOW_UP.test(question.trim())||/\b(that|those|this|it|they|them|previous|earlier)\b/i.test(question));
- const direct=rankSources(qwords).map(x=>x.source);
+ const intent=INTERVIEW_INTENTS.find(rule=>rule.re.test(question));
+ const curated=intent?intent.ids.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean):[];
+ const direct=[...new Map([...curated,...rankSources(qwords).map(x=>x.source)].map(s=>[s.id,s])).values()];
  if(isFollowup){
   const carried=rankSources(priorWords).slice(0,2).map(x=>x.source);
   return [...new Map([...carried,...direct].map(s=>[s.id,s])).values()].slice(0,4);
@@ -86,7 +120,7 @@ export default {async fetch(req,env){
  const question=body?.question;
  if(typeof question!=='string'||question.trim().length<2||question.length>350)return json({error:'Question must be 2–350 characters'},400);
  const history=Array.isArray(body.history)?body.history.slice(-MAX_MESSAGES).filter(m=>m&&['user','assistant'].includes(m.role)&&typeof m.content==='string'&&m.content.length<=1000).map(m=>({role:m.role,content:m.content})):[];
- if(UNVERIFIED.test(question)||INJECTION.test(question))return json({answer:BLOCKED,sources:[],grounded:false,referral:referral(question)});
+ if(UNVERIFIED.test(question)||REFUSE_UNVERIFIED.test(question)||INJECTION.test(question))return json({answer:BLOCKED,sources:[],grounded:false,referral:referral(question)});
  const sources=selectSources(question,history);
  if(!sources.length)return json({answer:BLOCKED,sources:[],grounded:false,referral:referral(question)});
  if(!env.RATE_LIMITER)return json({error:'Rate limiting service not configured'},503);
