@@ -59,3 +59,5 @@ html.rays-preview a:focus-visible,html.rays-preview button:focus-visible,html.ra
 .dot::before,.status-pulse::before{content:"";display:block;width:11px;height:11px;border-radius:50%;background-color:#ffffff;border:1px solid var(--ink);background-image:linear-gradient(58deg,transparent 43%,var(--ink) 44%,var(--ink) 48%,transparent 49%),linear-gradient(-58deg,transparent 43%,var(--ink) 44%,var(--ink) 48%,transparent 49%);}
 .status-pulse{position:relative;width:13px;height:13px;background:none;border-radius:0;box-shadow:none;flex:none}
 .status-pulse::before{width:11px;height:11px}
+
+.hero h1 .dot{width:.22em;height:.22em;vertical-align:.16em;margin-left:.08em}.hero h1 .dot::before{width:100%;height:100%}
