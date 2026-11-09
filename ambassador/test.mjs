@@ -43,7 +43,7 @@ test('citation-only responses do not create sources from unapproved ids',async()
 });
 
 test('approved evidence records have unique IDs, stable HTTPS links and explicit status',()=>{
- assert.ok(SOURCES.length>=19);
+ assert.ok(SOURCES.length>=20);
  const seen=new Set();
  for(const s of SOURCES){
    assert.match(s.id,/^S\d+$/);
@@ -66,13 +66,26 @@ test('conversational follow-up can carry the prior project context',()=>{
  assert.ok(chosen.some(s=>s.id==='S10'),'county AI governance should remain retrievable');
  assert.ok(chosen.some(s=>s.id==='S19'),'baseball transferability should be considered');
 });
-test('unknown question returns a destination but never invents an answer',async()=>{
- const r=await send({question:'Has he won a championship with an MLB team?'});
+test('an explicitly documented negative MLB championship claim has evidence',()=>{
+ const sources=selectSources('Has he won an MLB championship or played professional baseball?');
+ assert.ok(sources.some(s=>s.id==='S20'));
+ assert.match(sources.find(s=>s.id==='S20').facts,/never won an MLB championship/);
+});
+test('private reference request fails closed with contact referral',async()=>{
+ const r=await send({question:'Can you share a private reference?'});
  const d=await r.json();assert.equal(d.grounded,false);
- assert.ok(d.referral?.url);
- assert.deepEqual(d.sources,[]);
+ assert.match(d.referral.url,/mailto:/);assert.deepEqual(d.sources,[]);
 });
 test('only actually cited evidence appears in server-provided links',async()=>{
  const r=await worker.fetch(new Request(url,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({question:'Explain Hardball and the author background'})}),{AI:{run:async()=>({response:'Hardball is a public project [S1].'})}});
  const d=await r.json();assert.equal(d.grounded,true);assert.deepEqual(d.sources.map(s=>s.id),['S1']);
+});
+
+test('athletic history and BUD/S preparation are precisely scoped',()=>{
+ const s=SOURCES.find(x=>x.id==='S20');
+ assert.ok(s);
+ for(const sport of ['Little League','Senior League','karate','wrestling','football','basketball','track and field'])assert.ok(s.facts.includes(sport),sport);
+ assert.match(s.facts,/does NOT claim to have completed BUD\/S/);
+ assert.match(s.facts,/never won an MLB championship/);
+ assert.equal(selectSources('What sports did Michael compete in during high school?')[0].id,'S20');
 });
