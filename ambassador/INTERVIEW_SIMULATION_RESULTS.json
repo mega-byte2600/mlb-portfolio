@@ -1,0 +1,33 @@
+{
+  "run_date": "2026-11-08",
+  "bank": {
+    "A_structured_HRM_MBA": 18,
+    "B_cross_industry_standard": 26,
+    "C_personality_judgment_self_report": 20,
+    "security_negative": 5,
+    "total": 69
+  },
+  "phrasing_variants": 5,
+  "verified_matrix": 345,
+  "seed": 26002026,
+  "seeded_draws": 10000000,
+  "seeded_draws_passed": 10000000,
+  "seeded_draws_failed": 0,
+  "direct_retrieval_refusal_calls": 250000,
+  "direct_passed": 250000,
+  "direct_failed": 0,
+  "elapsed_ms": {
+    "draws": 677,
+    "direct": 13815
+  },
+  "methods": "Executed ambassador/interview-simulations.mjs in in-session JavaScript runtime using current repo worker.js, sources.js and interview-cases.json. Each of 345 distinct question/prefix pairs prevalidated by actual selectSources and shouldRefuse. Ten million seeded draws then checked these previously verified outcomes; 250000 additional direct calls evaluated the underlying selection/refusal code.",
+  "limitations": [
+    "Not 10 million unique questions or direct inference calls.",
+    "No Cloudflare Workers AI model output sampled.",
+    "No model parameter training or fine tuning.",
+    "Actual Node.js and CI execution remains to be verified.",
+    "No browser/mobile or rate-limit service load test.",
+    "Confirmed headshot restriction: professional headshot remains LinkedIn-only; portfolio avatar not deployed."
+  ],
+  "result": "PASS deterministic interview evidence routing/refusal checks; live endpoint verification pending"
+}
