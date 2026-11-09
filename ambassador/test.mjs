@@ -120,3 +120,12 @@ test('missing rate limiting binding fails closed',async()=>{
  const r=await worker.fetch(new Request(url,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({question:'What is Hardball?'})}),{AI:{run:async()=>{throw Error('must not call model')}}});
  assert.equal(r.status,503);
 });
+
+test('Hardball value proposition preserves human-centered mission and avoids MLB employment claims',()=>{
+ const statement="I help baseball organizations make smarter, evidence-based roster decisions without losing sight of each player’s health, family, and long-term career.";
+ assert.equal(statement.trim().split(/\s+/).length,20);
+ const source=SOURCES.find(s=>s.id==='S28');
+ assert.ok(source.facts.includes(statement));
+ assert.match(source.facts,/mission statement/);
+ assert.doesNotMatch(statement,/worked for|employed by|MLB championship/i);
+});
