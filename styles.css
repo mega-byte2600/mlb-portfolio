@@ -33,3 +33,23 @@
 /* Illustrated author portrait; visible only when the user-supplied image asset is present. */
 .chat-head>div{min-width:0;flex:1}.chat-head small{display:block;white-space:normal;overflow-wrap:anywhere}.ambassador-avatar{display:block;flex:none;width:88px;height:88px;max-width:88px;object-fit:contain;margin-left:auto;align-self:center;}
 @media(max-width:760px){.chat-head{padding:15px 18px;gap:8px}.ambassador-avatar{width:64px;height:64px;max-width:64px}}
+
+/* Reversible Tampa Bay Rays preview. Default production theme is unchanged. */
+html.rays-preview{--ink:#092c5c;--dark:#092c5c;--cream:#f7f9fb;--muted:#506273;--mint:#f5d34f;--orange:#4aaed1;--line:#c5dce8}
+html.rays-preview body{background:var(--cream)}
+html.rays-preview .site-header,html.rays-preview .hero,html.rays-preview footer{background:#092c5c}
+html.rays-preview .site-header{border-bottom-color:#35658c}
+html.rays-preview .dot,html.rays-preview .footer-mark span,html.rays-preview .hero .eyebrow,html.rays-preview .hero h1 em,html.rays-preview .players h2 em{color:#f5d34f}
+html.rays-preview .header-cta:hover,html.rays-preview .btn-primary,html.rays-preview .ask-form button,html.rays-preview .action-button{background:#f5d34f;color:#092c5c;border-color:#f5d34f}
+html.rays-preview .hero-visual{background:radial-gradient(circle at 46% 44%,#164d78 0,#0e3a66 40%,#092c5c 80%);border-color:#4aaed1}
+html.rays-preview .diamond-inner,html.rays-preview .micro-bars i,html.rays-preview .product-top b{background:#f5d34f}
+html.rays-preview .diamond-middle,html.rays-preview .field-trace path{border-color:#75c8e8;stroke:#75c8e8}
+html.rays-preview .hardball .highlight-underline{border-bottom-color:#4aaed1}
+html.rays-preview .product-panel{background:#092c5c;box-shadow:19px 20px 0 #d6eaf3}
+html.rays-preview .evidence{background:#eaf5fa}
+html.rays-preview .players{background:#123f6b}
+html.rays-preview .players .section-heading .eyebrow,html.rays-preview .section-number.light,html.rays-preview .players-columns article span,html.rays-preview .languages strong{color:#f5d34f}
+html.rays-preview .chat-head,html.rays-preview .bubble.user{background:#092c5c}
+html.rays-preview .chat{box-shadow:13px 14px 0 #d6eaf3}
+html.rays-preview a:focus-visible,html.rays-preview button:focus-visible,html.rays-preview input:focus-visible{outline-color:#f5d34f}
+@media(max-width:760px){html.rays-preview .product-panel{box-shadow:9px 10px 0 #d6eaf3}}
