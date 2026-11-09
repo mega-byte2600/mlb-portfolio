@@ -94,6 +94,19 @@ test('interpersonal conflict and competing priorities remain distinct',async()=>
  assert.deepEqual(priorities.sources.map(s=>s.id),['S23']);
 });
 
+test('bounded agentic actions return allowlisted proposals without sending or browsing server side',async()=>{
+ const linkedin=await (await worker.fetch(mkRequest('Open Michael’s LinkedIn profile'),fakeEnv('unused'))).json();
+ const email=await (await worker.fetch(mkRequest('Prepare an email with Michael’s résumé'),fakeEnv('unused'))).json();
+ assert.equal(linkedin.model,'Bounded action proposal');
+ assert.equal(linkedin.action.type,'open_url');
+ assert.equal(linkedin.action.url,'https://www.linkedin.com/in/bolton-2600/');
+ assert.equal(linkedin.action.requiresConfirmation,false);
+ assert.equal(email.model,'Bounded action proposal');
+ assert.equal(email.action.type,'compose_email');
+ assert.equal(email.action.requiresConfirmation,true);
+ assert.match(email.action.url,/^mailto:\?subject=/);
+});
+
 test('345 original and paraphrased recruiter queries preserve evidence/refusal expectations',()=>{
  const prefixes=['','Please answer: ','As a recruiter, ','For a baseball front office interview, ','In a structured HR interview, '];
  for(const item of bank.cases)for(const prefix of prefixes){
