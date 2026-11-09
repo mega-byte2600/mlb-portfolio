@@ -1,6 +1,7 @@
 import { SOURCES } from './sources.js';
 const MODEL='@cf/zai-org/glm-4.7-flash';
 const BUILD_VERSION='2026-11-09-curated-interview-synthesis-v7';
+const SELF_TEST_URL='https://mlb-portfolio-ambassador.mlb-ambassador-msb.workers.dev';
 const MAX_MESSAGES=6;
 const UNVERIFIED=/\b(private reference|personal phone number|his salary|michael.s salary|what salary does|salary does michael want|salary expectation|expected salary|desired salary|salary requirement|compensation expectation|willing to relocate|relocation preference|would relocate|open to relocation|availability to start|when can he start|immediate availability)\b/i;
 const INJECTION=/\b(ignore|override|disregard|forget|bypass)\s+(all\s+|your\s+|previous\s+|earlier\s+|the\s+)?(instructions|rules|system|policy)|\b(system prompt|developer message|hidden instructions|jailbreak|you are now|new instructions|instruction hierarchy)\b|\b(reveal|print|show|dump|repeat|disclose)\s+(your\s+|the\s+)?(system prompt|hidden instructions|developer message)/i;
@@ -176,7 +177,17 @@ function selectSources(question,history=[]){
  return direct.slice(0,4);
 }
 function json(data,status=200,origin=ORIGIN){return new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json; charset=utf-8','access-control-allow-origin':origin,'vary':'Origin','cache-control':'no-store','x-content-type-options':'nosniff','access-control-allow-methods':'POST, OPTIONS','access-control-allow-headers':'Content-Type'}})}
-export default {async fetch(req,env){
+async function verifyScheduledAgenticCapability(){
+ const response=await fetch(SELF_TEST_URL,{method:'POST',headers:{Origin:ORIGIN,'content-type':'application/json'},body:JSON.stringify({question:'Could you open or show me?',history:[{role:'user',content:'What is Michael’s LinkedIn profile?'}]})});
+ if(!response.ok)throw new Error(`scheduled agentic check returned HTTP ${response.status}`);
+ const result=await response.json();
+ if(result.build!==BUILD_VERSION||result.model!=='Bounded action proposal'||result.action?.type!=='open_url'||result.action?.url!==ACTIONS.linkedin.url)throw new Error('scheduled agentic check failed its bounded LinkedIn contract');
+ return result;
+}
+export default {async scheduled(controller){
+ await verifyScheduledAgenticCapability();
+ console.log(JSON.stringify({event:'agentic-capability-check',cron:controller.cron,build:BUILD_VERSION,status:'pass'}));
+},async fetch(req,env){
  const origin=req.headers.get('Origin');
  if(origin!==ORIGIN)return json({error:'Origin not permitted'},403,'null');
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers:{'access-control-allow-origin':ORIGIN,'access-control-allow-methods':'POST, OPTIONS','access-control-allow-headers':'Content-Type','access-control-max-age':'600'}});
