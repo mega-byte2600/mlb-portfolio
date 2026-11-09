@@ -30,4 +30,5 @@
 }
 
 /* Illustrated author portrait; visible only when the user-supplied image asset is present. */
-.ambassador-avatar{display:block;flex:none;width:46px;height:46px;object-fit:contain;border-radius:50%;background:#fff;}
+.ambassador-avatar{display:block;flex:none;width:88px;height:88px;object-fit:contain;margin-left:auto;align-self:center;}
+@media(max-width:760px){.chat-head{padding:15px 18px}.ambassador-avatar{width:64px;height:64px}}

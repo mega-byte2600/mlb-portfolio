@@ -9,9 +9,9 @@ import {SOURCES} from './sources.js';
 
 const bank=JSON.parse(readFileSync(new URL('./interview-cases.json',import.meta.url),'utf8'));
 const ORIGIN='https://mega-byte2600.github.io';
-const URL='https://placeholder.workers.dev/';
+const REQUEST_URL='https://placeholder.workers.dev/';
 const REFUSAL="I don't have verified information about that.";
-const mkRequest=q=>new Request(URL,{
+const mkRequest=q=>new Request(REQUEST_URL,{
  method:'POST',headers:{Origin:ORIGIN,'Content-Type':'application/json'},
  body:JSON.stringify({question:q})
 });
