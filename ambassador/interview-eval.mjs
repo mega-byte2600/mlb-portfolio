@@ -49,10 +49,16 @@ for(const example of bank.cases){
    assert.equal(payload.answer,REFUSAL);
    assert.equal(payload.sources.length,0);
   }else{
-   assert.equal(called,1,'relevant interview answer should invoke AI');
+   if(example.id==='B03')assert.equal(called,0,'curated motivation answer must not require model inference');
+   else assert.equal(called,1,'relevant interview answer should invoke AI');
    // The model may have added unrelated text: it must never reach the caller.
    assert.doesNotMatch(payload.answer,/extraneous speculative assertions/);
    assert.equal(payload.grounded,true);
+   if(payload.model==='Curated evidence synthesis'){
+    assert.match(payload.answer,/evidence-informed/);
+    assert.ok(payload.sources.length>=2);
+    return;
+   }
    for(const cited of payload.sources){
     const s=SOURCES.find(s=>s.id===cited.id);
     assert.ok(s);
@@ -61,6 +67,18 @@ for(const example of bank.cases){
   }
  });
 }
+
+test('MLB motivation question receives a direct evidence-informed synthesis',async()=>{
+ let called=0;
+ const result=await worker.fetch(mkRequest('Why do you wanna work at MLB?'),fakeEnv('unused',()=>called++));
+ const payload=await result.json();
+ assert.equal(result.status,200);
+ assert.equal(called,0);
+ assert.equal(payload.model,'Curated evidence synthesis');
+ assert.match(payload.answer,/extend my evidence-informed healthcare and public-health work into baseball/);
+ assert.match(payload.answer,/Hardball is my baseball research vehicle/);
+ assert.deepEqual(payload.sources.map(s=>s.id),['S28','S19','S18']);
+});
 
 test('345 original and paraphrased recruiter queries preserve evidence/refusal expectations',()=>{
  const prefixes=['','Please answer: ','As a recruiter, ','For a baseball front office interview, ','In a structured HR interview, '];
