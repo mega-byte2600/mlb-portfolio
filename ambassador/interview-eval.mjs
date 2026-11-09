@@ -49,14 +49,15 @@ for(const example of bank.cases){
    assert.equal(payload.answer,REFUSAL);
    assert.equal(payload.sources.length,0);
   }else{
-   if(example.id==='B03')assert.equal(called,0,'curated motivation answer must not require model inference');
+   if(['A03','B03'].includes(example.id))assert.equal(called,0,'curated interview answer must not require model inference');
    else assert.equal(called,1,'relevant interview answer should invoke AI');
    // The model may have added unrelated text: it must never reach the caller.
    assert.doesNotMatch(payload.answer,/extraneous speculative assertions/);
    assert.equal(payload.grounded,true);
    if(payload.model==='Curated evidence synthesis'){
-    assert.match(payload.answer,/evidence-informed/);
-    assert.ok(payload.sources.length>=2);
+    if(example.id==='B03')assert.match(payload.answer,/evidence-informed/);
+    if(example.id==='A03')assert.match(payload.answer,/Eisenhower style/);
+    if(example.id==='B03')assert.ok(payload.sources.length>=2);
     return;
    }
    for(const cited of payload.sources){
@@ -78,6 +79,18 @@ test('MLB motivation question receives a direct evidence-informed synthesis',asy
  assert.match(payload.answer,/extend my evidence-informed healthcare and public-health work into baseball/);
  assert.match(payload.answer,/Hardball is my baseball research vehicle/);
  assert.deepEqual(payload.sources.map(s=>s.id),['S28','S19','S18']);
+});
+
+test('interpersonal conflict and competing priorities remain distinct',async()=>{
+ const conflict=await (await worker.fetch(mkRequest('How do you deal with interpersonal conflicts?'),fakeEnv('unused'))).json();
+ const priorities=await (await worker.fetch(mkRequest('How do you manage conflicting priorities?'),fakeEnv('unused'))).json();
+ assert.equal(conflict.model,'Curated evidence synthesis');
+ assert.equal(priorities.model,'Curated evidence synthesis');
+ assert.match(conflict.answer,/listening carefully/);
+ assert.match(priorities.answer,/Eisenhower style/);
+ assert.notEqual(conflict.answer,priorities.answer);
+ assert.deepEqual(conflict.sources.map(s=>s.id),['S23']);
+ assert.deepEqual(priorities.sources.map(s=>s.id),['S23']);
 });
 
 test('345 original and paraphrased recruiter queries preserve evidence/refusal expectations',()=>{
