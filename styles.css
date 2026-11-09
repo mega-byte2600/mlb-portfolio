@@ -35,21 +35,27 @@
 @media(max-width:760px){.chat-head{padding:15px 18px;gap:8px}.ambassador-avatar{width:64px;height:64px;max-width:64px}}
 
 /* Reversible Tampa Bay Rays preview. Default production theme is unchanged. */
-html.rays-preview{--ink:#092c5c;--dark:#092c5c;--cream:#f7f9fb;--muted:#506273;--mint:#f5d34f;--orange:#4aaed1;--line:#c5dce8}
+html.rays-preview{--ink:#092c5c;--dark:#092c5c;--cream:#ffffff;--muted:#506273;--mint:#f5d130;--orange:#8fbce6;--line:#8fbce6}
 html.rays-preview body{background:var(--cream)}
 html.rays-preview .site-header,html.rays-preview .hero,html.rays-preview footer{background:#092c5c}
-html.rays-preview .site-header{border-bottom-color:#35658c}
-html.rays-preview .dot,html.rays-preview .footer-mark span,html.rays-preview .hero .eyebrow,html.rays-preview .hero h1 em,html.rays-preview .players h2 em{color:#f5d34f}
-html.rays-preview .header-cta:hover,html.rays-preview .btn-primary,html.rays-preview .ask-form button,html.rays-preview .action-button{background:#f5d34f;color:#092c5c;border-color:#f5d34f}
-html.rays-preview .hero-visual{background:radial-gradient(circle at 46% 44%,#164d78 0,#0e3a66 40%,#092c5c 80%);border-color:#4aaed1}
-html.rays-preview .diamond-inner,html.rays-preview .micro-bars i,html.rays-preview .product-top b{background:#f5d34f}
-html.rays-preview .diamond-middle,html.rays-preview .field-trace path{border-color:#75c8e8;stroke:#75c8e8}
-html.rays-preview .hardball .highlight-underline{border-bottom-color:#4aaed1}
+html.rays-preview .site-header{border-bottom-color:#8fbce6}
+html.rays-preview .dot,html.rays-preview .footer-mark span,html.rays-preview .hero .eyebrow,html.rays-preview .hero h1 em,html.rays-preview .players h2 em{color:#f5d130}
+html.rays-preview .header-cta:hover,html.rays-preview .btn-primary,html.rays-preview .ask-form button,html.rays-preview .action-button{background:#f5d130;color:#092c5c;border-color:#f5d130}
+html.rays-preview .hero-visual{background:radial-gradient(circle at 46% 44%,#164d78 0,#0e3a66 40%,#092c5c 80%);border-color:#8fbce6}
+html.rays-preview .diamond-inner,html.rays-preview .micro-bars i,html.rays-preview .product-top b{background:#f5d130}
+html.rays-preview .diamond-middle,html.rays-preview .field-trace path{border-color:#8fbce6;stroke:#8fbce6}
+html.rays-preview .hardball .highlight-underline{border-bottom-color:#8fbce6}
 html.rays-preview .product-panel{background:#092c5c;box-shadow:19px 20px 0 #d6eaf3}
 html.rays-preview .evidence{background:#eaf5fa}
 html.rays-preview .players{background:#123f6b}
-html.rays-preview .players .section-heading .eyebrow,html.rays-preview .section-number.light,html.rays-preview .players-columns article span,html.rays-preview .languages strong{color:#f5d34f}
+html.rays-preview .players .section-heading .eyebrow,html.rays-preview .section-number.light,html.rays-preview .players-columns article span,html.rays-preview .languages strong{color:#f5d130}
 html.rays-preview .chat-head,html.rays-preview .bubble.user{background:#092c5c}
 html.rays-preview .chat{box-shadow:13px 14px 0 #d6eaf3}
-html.rays-preview a:focus-visible,html.rays-preview button:focus-visible,html.rays-preview input:focus-visible{outline-color:#f5d34f}
+html.rays-preview a:focus-visible,html.rays-preview button:focus-visible,html.rays-preview input:focus-visible{outline-color:#f5d130}
 @media(max-width:760px){html.rays-preview .product-panel{box-shadow:9px 10px 0 #d6eaf3}}
+
+/* Small baseball marks replace ambiguous yellow dots without changing larger data graphics. */
+.dot{display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;font-size:0;vertical-align:-1px}
+.dot::before,.status-pulse::before{content:"";display:block;width:11px;height:11px;border-radius:50%;background-color:var(--mint);border:1px solid var(--ink);background-image:linear-gradient(58deg,transparent 43%,var(--ink) 44%,var(--ink) 48%,transparent 49%),linear-gradient(-58deg,transparent 43%,var(--ink) 44%,var(--ink) 48%,transparent 49%);}
+.status-pulse{position:relative;width:13px;height:13px;background:none;border-radius:0;box-shadow:none;flex:none}
+.status-pulse::before{width:11px;height:11px}
