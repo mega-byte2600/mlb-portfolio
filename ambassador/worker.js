@@ -1,6 +1,6 @@
 import { SOURCES } from './sources.js';
 const MODEL='@cf/zai-org/glm-4.7-flash';
-const BUILD_VERSION='2026-11-09-curated-interview-synthesis-v7';
+const BUILD_VERSION='2026-11-09-native-cron-agentic-verification-v8';
 const SELF_TEST_URL='https://mlb-portfolio-ambassador.mlb-ambassador-msb.workers.dev';
 const MAX_MESSAGES=6;
 const UNVERIFIED=/\b(private reference|personal phone number|his salary|michael.s salary|what salary does|salary does michael want|salary expectation|expected salary|desired salary|salary requirement|compensation expectation|willing to relocate|relocation preference|would relocate|open to relocation|availability to start|when can he start|immediate availability)\b/i;
