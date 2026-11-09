@@ -53,7 +53,7 @@ function selectSources(question,history=[]){
    const carried=rank(priorWords).slice(0,2).map(x=>x.source);
    return [...new Map([...carried,...direct].map(s=>[s.id,s])).values()].slice(0,4);
  }
- if(!direct.length&&/^(hi|hello|hey|who is he|who is michael|introduce|overview|background)/i.test(question.trim()))return [SOURCES.find(s=>s.id==='S6')];
+ if(!direct.length&&/\b(hi|hello|hey|who is|introduce|overview|background|tell me about|professional summary|career summary|qualifications)\b/i.test(question))return [SOURCES.find(s=>s.id==='S6')];
  return direct.slice(0,4);
 }
 function json(data,status=200,origin=ORIGIN){return new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json; charset=utf-8','access-control-allow-origin':origin,'vary':'Origin','cache-control':'no-store','x-content-type-options':'nosniff','access-control-allow-methods':'POST, OPTIONS','access-control-allow-headers':'Content-Type'}})}
