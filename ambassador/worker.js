@@ -14,6 +14,12 @@ const PRIORITIES_SOURCE_IDS=['S23'];
 const PRIORITIES_ANSWER="When priorities compete, I first clarify the requirements and the consequences of delay. I use an Eisenhower style urgency and importance matrix, ask questions, and confirm what matters most with the people involved. Then I sequence the work, communicate trade offs, and own follow through. My documented examples include coordinating distributed Deloitte delivery, implementing county incident reporting, and leading the Abbott RT5 improvement. [S23]";
 const CONFLICT_SOURCE_IDS=['S29'];
 const CONFLICT_ANSWER="I start with Individualization, using theory of mind and mentalization to understand the person's needs and perspective. I look for the overlap where we can meet in the middle, like the common area of a Venn diagram. Then I use Restorative to look for repair and common ground, Learner to adapt, Responsibility and Extreme Ownership to follow through, and Belief to keep the attitude constructive. I use Radical Candor to be direct and respectful, while applying the strengths that fit the situation. This is my stated approach, not a claim about a specific employer conflict outcome. [S29]";
+const ACTIONS=Object.freeze({
+ linkedin:{type:'open_url',label:'Open LinkedIn profile',url:'https://www.linkedin.com/in/bolton-2600/',sourceIds:['S8']},
+ hardball:{type:'open_url',label:'Open Hardball research',url:'https://mega-byte2600.github.io/hardball/dashboard/',sourceIds:['S1']},
+ resume:{type:'open_url',label:'Download Michael’s Résumé (PDF)',url:'https://mega-byte2600.github.io/mlb-portfolio/Michael_Bolton_Resume_Nov_2026.pdf',sourceIds:['S7']},
+ email:{type:'compose_email',label:'Prepare résumé email',url:'mailto:?subject=Michael%20Bolton%20portfolio&body=Hello%2C%0A%0AI%20am%20sharing%20Michael%20Bolton%27s%20professional%20portfolio%20and%20résumé.%0A%0APortfolio%3A%20https%3A%2F%2Fmega-byte2600.github.io%2Fmlb-portfolio%2F%0ARésumé%20(PDF)%3A%20https%3A%2F%2Fmega-byte2600.github.io%2Fmlb-portfolio%2FMichael_Bolton_Resume_Nov_2026.pdf%0A%0ABest%2C',sourceIds:['S7']}
+});
 const STOP=new Set(['who','whose','where','when','which','why','the','and','for','with','what','how','about','does','did','was','are','can','you','his','her','their','tell','me','more','some','would','could','please','michael','bolton','that','this','from','into','your','work','project','experience','background','skill','skills']);
 const tokenise=s=>(s.toLowerCase().match(/[\p{L}\p{N}]+/gu)||[]).filter(w=>w.length>=3&&!STOP.has(w));
 const ALIASES=Object.freeze({
@@ -122,6 +128,14 @@ function shouldRefuse(question){return UNVERIFIED.test(question)||COMPENSATION_U
 function isMLBMotivation(question){return /\bwhy\b.{0,35}\b(work|join|want|interested|apply|pursue)\b.{0,45}\b(mlb|major league baseball|baseball)\b|\bwhy\s+(mlb|major league baseball)\b/i.test(question)}
 function isInterpersonalConflict(question){return /\b(interpersonal conflicts?|conflict with (a|my|your|a teammate|a coworker)|handle conflict with (a|my|your|a teammate|a coworker)|deal with conflicts?|difficult conversation with a teammate|disagreement with a teammate)\b/i.test(question)}
 function isCompetingPriorities(question){return /\b(prioritize|prioritise|priorities|manage|handle|deal with)\b.{0,70}\b(competing|conflicting)\b.{0,35}\b(priorit|projects?|deadlines?)\b|\b(competing|conflicting)\s+(priorities|projects|deadlines)\b/i.test(question)}
+function actionFor(question){
+ const q=question.toLowerCase();
+ if(/\b(open|take me to|show me|visit|go to)\b.{0,35}\b(linkedin|profile)\b|\blinkedin profile\b.{0,25}\b(open|visit|show)\b/i.test(q))return ACTIONS.linkedin;
+ if(/\b(open|take me to|show me|visit|go to)\b.{0,35}\bhardball\b/i.test(q))return ACTIONS.hardball;
+ if(/\b(download|open|view|send|share)\b.{0,45}(?:résumé|resume|curriculum vitae|cv)/i.test(q)&&/\b(download|open|view)\b/i.test(q))return ACTIONS.resume;
+ if(/\b(send|email|e-mail|share|prepare)\b.{0,60}(?:résumé|resume|cv|portfolio)/i.test(q))return ACTIONS.email;
+ return null;
+}
 
 const INDEX=SOURCES.map(source=>({source,terms:new Set(tokenise(source.terms+' '+source.title))}));
 const ANCHORS=new Set(['hardball','pfac','eleos','abbott','deloitte','cdc','auris','emporion','linkedin','wyoming','dartmouth','rt5','navy','bds','sabr','gcp']);
@@ -176,6 +190,12 @@ export default {async fetch(req,env){
  if(isCompetingPriorities(question)){
   const used=PRIORITIES_SOURCE_IDS.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
   return json({answer:PRIORITIES_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
+ }
+ const action=actionFor(question);
+ if(action){
+  const used=action.sourceIds.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
+  const answer=action.type==='compose_email'?'I can prepare a résumé email draft. You choose the recipient and confirm sending in your own email app.':`I can open the approved ${action.label.toLowerCase()} for you.`;
+  return json({answer,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Bounded action proposal',build:BUILD_VERSION,action:{type:action.type,label:action.label,url:action.url,requiresConfirmation:action.type==='compose_email'},referral:referral(question)});
  }
  const sources=selectSources(question,history);
  if(!sources.length)return json({answer:BLOCKED,sources:[],grounded:false,referral:referral(question)});
