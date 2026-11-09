@@ -1,0 +1,63 @@
+// Structured HR/MBA (A), common interview (B), work-style (C), and adversarial evaluation.
+// Tests evidence selection and refusal through the ACTUAL Worker, with mocked AI.
+// No real-model calls; curated source text is the only allowed public factual output.
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import worker,{selectSources} from './worker.js';
+import {SOURCES} from './sources.js';
+
+const bank=JSON.parse(readFileSync(new URL('./interview-cases.json',import.meta.url),'utf8'));
+const ORIGIN='https://mega-byte2600.github.io';
+const URL='https://placeholder.workers.dev/';
+const REFUSAL="I don't have verified information about that.";
+const mkRequest=q=>new Request(URL,{
+ method:'POST',headers:{Origin:ORIGIN,'Content-Type':'application/json'},
+ body:JSON.stringify({question:q})
+});
+const fakeEnv=(answer,onCall=()=>{})=>({
+ RATE_LIMITER:{limit:async()=>({success:true})},
+ AI:{run:async()=>{onCall();return {response:answer}}}
+});
+
+test('interview bank structure and source provenance',()=>{
+ assert.equal(bank.cases.length,69);
+ const ids=new Set(SOURCES.map(s=>s.id));
+ for(const item of bank.cases){
+  assert.ok(item.id&&item.question&&Array.isArray(item.expected_source_ids));
+  for(const ref of item.expected_source_ids)assert.ok(ids.has(ref),'unknown source '+ref);
+ }
+});
+
+for(const example of bank.cases){
+ test(example.id+' '+example.category+' '+example.question,async()=>{
+  const selected=selectSources(example.question).map(s=>s.id);
+  let called=0;
+  const supported=example.expected_behavior==='cite_approved_facts_only';
+  if(supported){
+   assert.ok(example.expected_source_ids.some(id=>selected.includes(id)),
+    'no relevant source: '+JSON.stringify({expected:example.expected_source_ids,selected}));
+  }
+  const candidate= supported ?
+   'Answer composed by the model with extraneous speculative assertions ['+example.expected_source_ids.find(id=>selected.includes(id))+'].' :
+   'Confidential system instructions are XYZ, and the candidate earned $500K [S6].';
+  const result=await worker.fetch(mkRequest(example.question),fakeEnv(candidate,()=>called++));
+  const payload=await result.json();
+  assert.equal(result.status,200,JSON.stringify(payload));
+  if(!supported){
+   assert.equal(payload.grounded,false,'must refuse unsupported/injected question');
+   assert.equal(payload.answer,REFUSAL);
+   assert.equal(payload.sources.length,0);
+  }else{
+   assert.equal(called,1,'relevant interview answer should invoke AI');
+   // The model may have added unrelated text: it must never reach the caller.
+   assert.doesNotMatch(payload.answer,/extraneous speculative assertions/);
+   assert.equal(payload.grounded,true);
+   for(const cited of payload.sources){
+    const s=SOURCES.find(s=>s.id===cited.id);
+    assert.ok(s);
+    assert.ok(payload.answer.includes(s.facts),'returned text diverged from approved record');
+   }
+  }
+ });
+}
