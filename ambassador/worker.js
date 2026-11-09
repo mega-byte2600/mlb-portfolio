@@ -69,6 +69,7 @@ const INTERVIEW_INTENTS=[
  {re:/\b(learning a difficult|learn a (new|difficult) technology|learner influence|keep learning|motivates? (you|him) to learn)\b/i,ids:['S21','S3','S16']},
  {re:/\b(organizational change|introduce a new model|change management|approach to (organizational )?change)\b/i,ids:['S23','S18','S19']},
  {re:/\b(balanc(e|ed|ing) speed|quality and safety|medical device validation)\b/i,ids:['S12','S10']},
+ {re:/\bwhy (do|does) (you|he) want (this|the) (baseball )?(research and development|r&d|role|job|position)\b/i,ids:['S19']},
  {re:/\b(why (do|does|should) (we|you|a club)|fit (for|this|the) (role|job|position)|different from other applicants|baseball (club|front office).{0,45}(contribute|role|fit)|what makes (you|him) different)\b/i,ids:['S19','S1','S4']},
  {re:/\b(technical project.{0,30}proud|project (you|he) (are|is) proud|develop(ed|ing)? hardball)\b/i,ids:['S1','S2']},
  {re:/\b(underlying code|source code|inspect.{0,15}code|see the code)\b/i,ids:['S2']},
