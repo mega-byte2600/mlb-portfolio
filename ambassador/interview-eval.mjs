@@ -11,9 +11,9 @@ const bank=JSON.parse(readFileSync(new URL('./interview-cases.json',import.meta.
 const ORIGIN='https://mega-byte2600.github.io';
 const REQUEST_URL='https://placeholder.workers.dev/';
 const REFUSAL="I don't have verified information about that.";
-const mkRequest=q=>new Request(REQUEST_URL,{
+const mkRequest=(q,history=[])=>new Request(REQUEST_URL,{
  method:'POST',headers:{Origin:ORIGIN,'Content-Type':'application/json'},
- body:JSON.stringify({question:q})
+ body:JSON.stringify({question:q,history})
 });
 const fakeEnv=(answer,onCall=()=>{})=>({
  RATE_LIMITER:{limit:async()=>({success:true})},
@@ -105,6 +105,15 @@ test('bounded agentic actions return allowlisted proposals without sending or br
  assert.equal(email.action.type,'compose_email');
  assert.equal(email.action.requiresConfirmation,true);
  assert.match(email.action.url,/^mailto:\?subject=/);
+});
+
+test('follow-up open requests resolve the prior approved entity',async()=>{
+ const result=await (await worker.fetch(mkRequest('Could you open or show me?',[
+  {role:'user',content:'What is Michael’s LinkedIn profile?'}
+ ]),fakeEnv('unused'))).json();
+ assert.equal(result.model,'Bounded action proposal');
+ assert.equal(result.action.type,'open_url');
+ assert.equal(result.action.url,'https://www.linkedin.com/in/bolton-2600/');
 });
 
 test('strengths and blind spots use approved CliftonStrengths inference',async()=>{
