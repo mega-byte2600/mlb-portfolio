@@ -12,7 +12,7 @@ const APPROVED_ACTION_URLS=new Set(['https://www.linkedin.com/in/bolton-2600/','
 function append(message,klass,sources=[],action=null){
  const div=document.createElement('div');div.className='bubble '+klass;div.textContent=message;
  if(action&&typeof action==='object'){
-  const type=action.type,url=action.url,label=action.label;
+  const type=action.type,url=action.url,label=type==='compose_email'?'Open prefilled email':action.label;
   const safeOpen=type==='open_url'&&APPROVED_ACTION_URLS.has(url);
   const safeEmail=type==='compose_email'&&typeof url==='string'&&url.startsWith('mailto:?subject=');
   if((safeOpen||safeEmail)&&typeof label==='string'){
