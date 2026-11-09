@@ -81,6 +81,19 @@ const INTERVIEW_INTENTS=[
  {re:/\b(mba (strategy|simulation)|wyoming strategy)\b/i,ids:['S5','S13']}
 ];
 
+// Explicitly named employers/projects outrank generic interview framing.
+const ENTITY_PRIORITY=[
+ {re:/\babbott\b/i,ids:['S17','S5']},
+ {re:/\bnavy\b/i,ids:['S6','S20']},
+ {re:/\bcdc\b/i,ids:['S11']},
+ {re:/\beleos\b/i,ids:['S10']},
+ {re:/\bdeloitte\b/i,ids:['S16','S5']},
+ {re:/\bauris\b/i,ids:['S12']},
+ {re:/\bztoy\b/i,ids:['S25']},
+ {re:/\bemporion\b/i,ids:['S15']},
+ {re:/\bcommodore\b/i,ids:['S26']},
+ {re:/\bcliftonstrengths\b/i,ids:['S21']}
+];
 const INTERVIEW_ADDITIONAL_INTENTS=[
  {re:/\b(verify.{0,30}improvement.{0,20}sustain|improvement (was|is|remains) sustained|sustain(ed|able) improvement)\b/i,ids:['S17']},
  {re:/\b(walk me through (your|his|the) (resume|résumé)|resume walkthrough|career walkthrough)(?=\W|$)/i,ids:['S6','S13']},
@@ -89,9 +102,10 @@ const INTERVIEW_ADDITIONAL_INTENTS=[
  {re:/\b(unsure of an answer|uncertain of an answer|don't know an answer|do not know an answer)\b/i,ids:['S23','S19']},
  {re:/\b(world series ring|world series championship|won (an? )?mlb world series)\b/i,ids:['S20']}
 ];
+const COMPENSATION_UNKNOWN=/\b(what|which)\s+salary\s+(do|would)\s+(you|he|michael)\s+(expect|want|require)\b|\bsalary\s+do\s+you\s+expect\b/i;
 const REFUSE_UNVERIFIED=/\b(biggest career failure|biggest failure|difficult conflict with (a|his|my|the) manager|why (did|has) (he|you) leave (each|your|his)|reason(s)? for leaving (each|previous)|salary (expect|want|require)|expected compensation|relocat(e|ion|ing)|when (are|is) (you|he) available to start|available to start|introvert(ed)?|extrovert(ed)?|personality diagnosis|clinical personality|makes (you|him) angry|angry at work|always arrive (at work )?exactly on time|ever been late (to work)?|favorite childhood pet|home address|private mobile|personal (phone|mobile))\b/i;
 
-function shouldRefuse(question){return UNVERIFIED.test(question)||REFUSE_UNVERIFIED.test(question)||INJECTION.test(question)}
+function shouldRefuse(question){return UNVERIFIED.test(question)||COMPENSATION_UNKNOWN.test(question)||REFUSE_UNVERIFIED.test(question)||INJECTION.test(question)}
 
 const INDEX=SOURCES.map(source=>({source,terms:new Set(tokenise(source.terms+' '+source.title))}));
 const ANCHORS=new Set(['hardball','pfac','eleos','abbott','deloitte','cdc','auris','emporion','linkedin','wyoming','dartmouth','rt5','navy','bds','sabr','gcp']);
@@ -110,7 +124,9 @@ function selectSources(question,history=[]){
  const priorWords=new Set(tokenise(expand(previous)));
  const isFollowup=Boolean(previous)&&(FOLLOW_UP.test(question.trim())||/\b(that|those|this|it|they|them|previous|earlier)\b/i.test(question));
  const intent=INTERVIEW_ADDITIONAL_INTENTS.find(rule=>rule.re.test(question))||INTERVIEW_INTENTS.find(rule=>rule.re.test(question));
- const curated=intent?intent.ids.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean):[];
+ const entity=ENTITY_PRIORITY.find(rule=>rule.re.test(question));
+ const ids=[...(entity?.ids||[]),...(intent?.ids||[])];
+ const curated=ids.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
  const direct=[...new Map([...curated,...rankSources(qwords).map(x=>x.source)].map(s=>[s.id,s])).values()];
  if(isFollowup){
   const carried=rankSources(priorWords).slice(0,2).map(x=>x.source);
