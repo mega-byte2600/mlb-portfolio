@@ -107,6 +107,16 @@ test('bounded agentic actions return allowlisted proposals without sending or br
  assert.match(email.action.url,/^mailto:\?subject=/);
 });
 
+test('strengths and blind spots use approved CliftonStrengths inference',async()=>{
+ const result=await (await worker.fetch(mkRequest('What strengths and weakness do you have?'),fakeEnv('unused'))).json();
+ assert.equal(result.model,'Curated evidence synthesis');
+ assert.equal(result.sources[0].id,'S30');
+ assert.match(result.answer,/Restorative/);
+ assert.match(result.answer,/blind spots/);
+ assert.match(result.answer,/overcommitment/);
+ assert.match(result.answer,/Radical Candor/);
+});
+
 test('345 original and paraphrased recruiter queries preserve evidence/refusal expectations',()=>{
  const prefixes=['','Please answer: ','As a recruiter, ','For a baseball front office interview, ','In a structured HR interview, '];
  for(const item of bank.cases)for(const prefix of prefixes){
