@@ -15,3 +15,16 @@
 .role-proof p{font-size:13px;line-height:1.55;color:#e0e8e3;margin:10px 0 0}
 .role-proof a{text-decoration:underline;text-underline-offset:3px;color:#f1f7dc}
 @media(max-width:850px){.role-proof{grid-template-columns:1fr;gap:10px;margin-top:24px}.role-proof article{padding:14px 18px}}
+
+/* Preserve desktop 2-column visual; put proof before illustration on 390px screens. */
+.hero-inner{grid-template-areas:"copy visual" "proof proof"}
+.hero-copy{grid-area:copy}
+.role-proof{grid-area:proof;width:100%}
+.hero-visual{grid-area:visual}
+@media(max-width:760px){
+ .hero-inner{grid-template-areas:"copy" "proof" "visual";grid-template-columns:minmax(0,1fr)}
+ .hero-visual{margin-top:14px}
+ .hero{padding-top:40px}
+ .hero h1{font-size:clamp(44px,10vw,68px)}
+ .role-proof p{font-size:13px}
+}
