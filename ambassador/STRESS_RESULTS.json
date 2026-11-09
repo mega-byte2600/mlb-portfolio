@@ -1,0 +1,22 @@
+{
+  "run_date": "2026-11-08",
+  "seed": 26002026,
+  "cases": 1000000,
+  "templates": 27,
+  "passed": 1000000,
+  "failed": 0,
+  "elapsed_ms_in_session": 23147,
+  "scope": "Deterministic selectSources retrieval regression; reused 27 question templates chosen by seeded PRNG, no Cloudflare AI inference or model training.",
+  "prior_baseline": {
+    "cases": 1000000,
+    "templates": 16,
+    "passed": 812500,
+    "failed": 187500,
+    "elapsed_ms_in_session": 211307
+  },
+  "warnings": [
+    "Results are from executing the repository logic in an in-session JavaScript harness, not a GitHub CI run.",
+    "The distinct scenario count is 27, not one million.",
+    "Does not measure factual hallucination, prompt injection in real inference, Cloudflare performance, browser rendering, or public availability."
+  ]
+}
