@@ -9,7 +9,7 @@ Independent, MLB-focused visual résumé and real AI Ambassador built for the **
 - **Public site:** GitHub Pages from `main` root. Expected address: https://mega-byte2600.github.io/mlb-portfolio/
 - **Backend:** Cloudflare Worker `ambassador/worker.js`, using Workers AI `@cf/zai-org/glm-4.7-flash`.
 - **Worker URL:** https://mlb-portfolio-ambassador.mlb-ambassador-msb.workers.dev
-- **Evidence:** 29 curated, provenance-labeled public summaries in `ambassador/sources.js`; human-reviewed claims, self-reported outcomes and proposed work must remain distinguished.
+- **Evidence:** 30 curated, provenance-labeled public summaries in `ambassador/sources.js`; human-reviewed claims, self-reported outcomes and proposed work must remain distinguished.
 - **Recruiter actions:** email, LinkedIn, GitHub, evidence ledger, and the exact supplied `Michael_Bolton_Resume_Nov_2026.pdf`.
 - **Browser chat:** `app.js`, suggested recruiter questions, multi-turn context, cited source links and bounded agentic action proposals. The browser can open allowlisted public resources or prepare an email draft; it cannot send email, access credentials or browse arbitrary URLs.
 - **Safety:** Worker refuses unsupported/sensitive topics and prompt injections, uses Cloudflare-native approximate rate limiter, and returns curated source facts instead of publishing unrestricted model prose. Cloudflare persisted Worker logs disabled in `wrangler.toml`. External provider data handling is governed by provider terms.
@@ -18,6 +18,8 @@ Independent, MLB-focused visual résumé and real AI Ambassador built for the **
 ## Setup and deploy
 
 Cloudflare Workers Builds is connected to the GitHub `main` branch and deploys the Worker with `ambassador/wrangler.toml` after a production commit. Live verification remains a release requirement.
+
+The repository quality gate runs on pull requests and pushes to `main`. It runs syntax checks, the complete Node regression suite, static smoke checks, deterministic interview stress checks, retrieval stress checks, credential-pattern scanning and pull-request dependency review. A separate scheduled workflow verifies the live GitHub Pages site and Cloudflare Worker, including the exact résumé and avatar hashes, evidence citations, distinct interview answers, bounded actions and refusal boundaries. Cloudflare remains the production deployment system; GitHub Actions supplies the quality and verification gates.
 
 For Cloudflare in the existing local `ambassador` directory:
 
@@ -42,20 +44,16 @@ node ambassador/stress.mjs
 node ambassador/interview-simulations.mjs
 ```
 
-- A/B/C interview evaluation: 69 structured HR/MBA, common recruiter, strengths and security scenarios, plus phrasing variants; the current local release gate includes **101 passing tests**, including distinct motivation, priorities, conflict and bounded-action cases.
+- A/B/C interview evaluation: 69 structured HR/MBA, common recruiter, strengths and security scenarios, plus phrasing variants; the current local release gate includes **102 passing tests**, including distinct motivation, priorities, conflict, strengths/blind-spot and bounded-action cases.
 - **10,000,000 seeded draws** passed across 345 previously validated question variants; **250,000 actual source selection/refusal calls** separately passed. See [interview simulation results](ambassador/INTERVIEW_SIMULATION_RESULTS.json) and [methodology](ambassador/INTERVIEW_METHOD.md). These are simulated checks, not model training or 10M live prompts.
 - The professional headshot remains LinkedIn-only; it is not embedded as a portfolio portrait or AI avatar.
 - One million deterministic retrieval checks across 27 repeated templates passed after indexed retrieval and relevance threshold improvements; see [ambassador/STRESS_RESULTS.json](ambassador/STRESS_RESULTS.json).
-- These tests do **not** mean one million unique questions, live-model evaluations or trained model weights. Formal Node CI, mobile visual review, browser keyboard checks and end-to-end Cloudflare evaluation remain separate release checks.
+- These tests do **not** mean one million unique questions, live-model evaluations or trained model weights. Mobile visual review and browser keyboard checks remain human release checks; live Pages and Cloudflare evaluation are covered by `scripts/live-smoke.mjs` in scheduled and manually runnable production verification.
 - Safety contract: exact refusal `I don't have verified information about that.` for unsupported preferences and injected requests; do not assert MLB affiliation, unauthorized credentials, player statistics or unverified employment.
 
-## What remains
+## Release discipline
 
-- Confirm external links, GitHub Pages publication, latest Cloudflare redeployment and four **live** recruiter chat scenarios.
-- Audit claim text against original source evidence and any reviewed public LinkedIn content, including link permissions.
-- Complete 390px and desktop accessibility/UX testing, real-world colleague 60-second scan and documentation of two alternative directions before final submission.
-- Verify the public PDF renders and downloads properly from GitHub Pages; Git PDF structure and cross-reference offsets were checked.
-- Submit only after the [acceptance checklist](ACCEPTANCE_CRITERIA.md) is actually validated.
+Every production change is expected to pass the local release gate and the GitHub Actions quality gate before merge. After deployment, the production verification workflow can be run manually and also runs daily against the public Pages and Worker endpoints. The live checks are intentionally narrow and deterministic so a passing result is evidence of the tested release contract, not a claim that every possible browser, model response or external service is defect-free.
 
 ## Evidence ethics
 
