@@ -1,6 +1,6 @@
 import { SOURCES } from './sources.js';
 const MODEL='@cf/zai-org/glm-4.7-flash';
-const BUILD_VERSION='2026-11-09-curated-interview-synthesis-v6';
+const BUILD_VERSION='2026-11-09-curated-interview-synthesis-v7';
 const MAX_MESSAGES=6;
 const UNVERIFIED=/\b(private reference|personal phone number|his salary|michael.s salary|what salary does|salary does michael want|salary expectation|expected salary|desired salary|salary requirement|compensation expectation|willing to relocate|relocation preference|would relocate|open to relocation|availability to start|when can he start|immediate availability)\b/i;
 const INJECTION=/\b(ignore|override|disregard|forget|bypass)\s+(all\s+|your\s+|previous\s+|earlier\s+|the\s+)?(instructions|rules|system|policy)|\b(system prompt|developer message|hidden instructions|jailbreak|you are now|new instructions|instruction hierarchy)\b|\b(reveal|print|show|dump|repeat|disclose)\s+(your\s+|the\s+)?(system prompt|hidden instructions|developer message)/i;
@@ -131,8 +131,14 @@ function isMLBMotivation(question){return /\bwhy\b.{0,35}\b(work|join|want|inter
 function isInterpersonalConflict(question){return /\b(interpersonal conflicts?|conflict with (a|my|your|a teammate|a coworker)|handle conflict with (a|my|your|a teammate|a coworker)|deal with conflicts?|difficult conversation with a teammate|disagreement with a teammate)\b/i.test(question)}
 function isCompetingPriorities(question){return /\b(prioritize|prioritise|priorities|manage|handle|deal with)\b.{0,70}\b(competing|conflicting)\b.{0,35}\b(priorit|projects?|deadlines?)\b|\b(competing|conflicting)\s+(priorities|projects|deadlines)\b/i.test(question)}
 function isStrengthsWeaknessQuestion(question){return /\b(strengths?.{0,45}weakness(?:es)?|weakness(?:es)?.{0,45}strengths?|blind\s*spots?)\b/i.test(question)}
-function actionFor(question){
+function actionFor(question,history=[]){
  const q=question.toLowerCase();
+ const previous=[...history].reverse().find(m=>m?.role==='user'&&typeof m.content==='string')?.content?.toLowerCase()||'';
+ const genericOpen=/\b(open|show|take me|visit|go to|display|see)\b/.test(q);
+ const previousEntity=previous.includes('linkedin')||previous.includes('profile')?'linkedin':previous.includes('hardball')?'hardball':/résumé|resume|curriculum vitae|\bcv\b/.test(previous)?'resume':null;
+ if(genericOpen&&previousEntity==='linkedin')return ACTIONS.linkedin;
+ if(genericOpen&&previousEntity==='hardball')return ACTIONS.hardball;
+ if(genericOpen&&previousEntity==='resume')return ACTIONS.resume;
  if(/\b(open|take me to|show me|visit|go to)\b.{0,35}\b(linkedin|profile)\b|\blinkedin profile\b.{0,25}\b(open|visit|show)\b/i.test(q))return ACTIONS.linkedin;
  if(/\b(open|take me to|show me|visit|go to)\b.{0,35}\bhardball\b/i.test(q))return ACTIONS.hardball;
  if(/\b(download|open|view|send|share)\b.{0,45}(?:résumé|resume|curriculum vitae|cv)/i.test(q)&&/\b(download|open|view)\b/i.test(q))return ACTIONS.resume;
@@ -198,7 +204,7 @@ export default {async fetch(req,env){
   const used=PRIORITIES_SOURCE_IDS.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
   return json({answer:PRIORITIES_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
  }
- const action=actionFor(question);
+ const action=actionFor(question,history);
  if(action){
   const used=action.sourceIds.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
   const answer=action.type==='compose_email'?'I can prepare a résumé email draft. You choose the recipient and confirm sending in your own email app.':`I can open the approved ${action.label.toLowerCase()} for you.`;
