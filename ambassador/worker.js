@@ -1,7 +1,7 @@
 import { SOURCES } from './sources.js';
 const MODEL='@cf/zai-org/glm-4.7-flash';
 const MAX_MESSAGES=6;
-const UNVERIFIED=/\b(private reference|personal phone number|his salary|michael.s salary|salary expectation|expected salary|desired salary|salary requirement|compensation expectation|willing to relocate|relocation preference|would relocate|open to relocation|availability to start|when can he start|immediate availability)\b/i;
+const UNVERIFIED=/\b(private reference|personal phone number|his salary|michael.s salary|what salary does|salary does michael want|salary expectation|expected salary|desired salary|salary requirement|compensation expectation|willing to relocate|relocation preference|would relocate|open to relocation|availability to start|when can he start|immediate availability)\b/i;
 const INJECTION=/(ignore|override|disregard|forget|reveal|print|show|disclose|dump|repeat|bypass|system prompt|developer message|hidden instructions|roleplay|jailbreak|you are now|new instructions|instruction hierarchy)/i;
 const UNSUPPORTED=/\b(world series mvp|world series ring|yankees employee|worked for (the )?(yankees|dodgers|mets|red sox)|played in (the )?mlb|mlb player|mlb champion|mlb championship winner|15 more wins|increased (the )?(yankees|dodgers).{0,40}wins|10 years (of )?(mlb|baseball)|relocat(e|ion|ing)|salary|compensation expectation)\b/i;
 const FOLLOW_UP=/^(and |also |but |why |how |what about |can you |could you |does that |did that |is that |tell me more|explain|expand|elaborate|in baseball|in mlb|for a club|for the team|how would that|what did that)/i;
