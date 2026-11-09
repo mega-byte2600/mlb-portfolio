@@ -1,5 +1,7 @@
 # MLB Portfolio — AI coding agent instructions
 
+**Read [CODEX_HANDOFF.md](CODEX_HANDOFF.md) first.** It contains the latest user-approved avatar placement (upper-right of AI Ambassador), exact supplied full résumé PDF, no-custom-Actions release requirements, and verified blockers. Where older notes conflict, prefer the handoff plus current repository state.
+
 ## Purpose
 Deliver the "Bring Your Resume to Life" challenge as an independent MLB-focused visual resume with a live, truthful, source-grounded conversational AI Ambassador. Hardball is a separate flagship project linked here; never modify its repository or deployment.
 
