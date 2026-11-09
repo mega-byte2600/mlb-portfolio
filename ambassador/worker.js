@@ -30,7 +30,11 @@ const ALIASES=Object.freeze({
  'why hire':'hardball baseball ai engineering leadership',
  'measurable improvement':'deloitte abbott cdc cost avoidance deployment backlog',
  'led teams':'deloitte offshore onshore team coordination project leadership',
- 'where led':'deloitte offshore onshore team coordination'
+ 'where led':'deloitte offshore onshore team coordination',
+ 'how long has he been programming':'commodore 1984 programming self taught',
+ 'when did he start ai':'auris 2015 computer vision technical leadership',
+ 'how long has michael been coding':'commodore 1984 programming self taught',
+ 'where did he learn to code':'commodore 1984 programming self taught'
 });
 const REFERRALS=Object.freeze({
  github:{label:'Explore public code and methodology on GitHub',url:'https://github.com/mega-byte2600'},
