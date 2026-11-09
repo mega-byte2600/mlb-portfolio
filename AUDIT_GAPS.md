@@ -57,3 +57,22 @@ Audit date: November 8, 2026. Scope: `mega-byte2600/mlb-portfolio` main branch; 
 6. **Prepare final Work/Codex handoff at 18:00 Pacific**, not before.
 
 Audit status: findings confirmed by GitHub code inspection and controlled simulations, except externally hosted availability and model behavior, which remain unverified in this audit.
+
+## Implementation update — November 8, 2026 (post-audit)
+
+**Committed and simulated/tested (NOT yet proven deployed):**
+- SEC-001: Worker returns curated source facts only; fabricated model text with a legitimate citation does not get published. This is conservative grounding, not semantic verification of arbitrary generated claims.
+- SEC-002: Cloudflare-native `RATE_LIMITER` configured to approximately 30 requests per minute per Cloudflare location, using a global key. Rate limits are approximate, not strict per-user protection.
+- SEC-003: Exact challenge prompt-injection refusal, unknown salary and relocation claims, and fake-employment answers covered in regression suite. Required refusal phrase enforced.
+- SEC-004: Wrangler `observability.enabled=false` configured, no application-side chat persistence. Provider processing and production configuration remain to be verified.
+- FIT-001/2: Homepage features working role label `Baseball Research & Development Analyst`, three capability/proof cards, direct contact and portfolio links.
+- FIT-003: Hardball remains flagship; project-action/outcome scope improved in public claim ledger, but full ordered project-case format still requires review.
+- DOC-001: `Michael_S_Bolton_Baseball_RD_Resume.pdf` exists as a valid ASCII PDF blob with structurally checked xref and cross-reference positions; direct homepage and résumé-page download links committed. Visual render and live download still require independent verification.
+- CHAT-001: Four recruiter questions in the site.
+- EVD-001: Public ledger expanded with specific disclosures for Hardball optimization scenarios, county AI governance and CDC; S9–S11 link to the corresponding register entries, preserving author-reported status.
+- QA-004: 24/24 Worker regression tests passed in the in-session JS harness. One million seeded retrieval checks across **27 repeated templates** passed with no failures (see `ambassador/STRESS_RESULTS.json`). Neither means one million unique questions or actual live-model inference. Initial 16-template baseline had 187,500 false retrieval matches out of 1 million; new indexed relevance threshold passed the revised benchmark.
+- OPS-002: README updated to current production architecture with no obsolete browser-only mock claims.
+
+**Still open:** Latest Cloudflare redeploy and real inference security tests; public GitHub Pages/Worker/PDF HTTP verification; independent 390px and desktop visual/keyboard/contrast review; two design variants and colleague 60-second scan; full factual audit against LinkedIn and third-party sources; final challenge submission. Do not mark these passed without evidence.
+
+**Change boundary:** Only `mega-byte2600/mlb-portfolio` changed; `mega-byte2600/hardball` untouched. The final Work/Codex handoff is deferred until 18:00 Pacific.
