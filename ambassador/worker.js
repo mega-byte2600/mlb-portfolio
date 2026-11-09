@@ -83,6 +83,7 @@ const INTERVIEW_INTENTS=[
 
 // Explicitly named employers/projects outrank generic interview framing.
 const ENTITY_PRIORITY=[
+ {re:/\birs\b/i,ids:['S5','S16']},
  {re:/\bhardball\b/i,ids:['S27','S1']},
  {re:/\b(players first|player wellbeing|players? (health|families|welfare)|why (mlb|baseball)|athletes? (as|are) people|commodit(y|ies)|mission)\b/i,ids:['S28','S4']},
  {re:/\babbott\b/i,ids:['S17','S5']},
