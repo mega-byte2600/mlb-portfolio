@@ -4,7 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import worker,{selectSources} from './worker.js';
+import worker,{selectSources,shouldRefuse} from './worker.js';
 import {SOURCES} from './sources.js';
 
 const bank=JSON.parse(readFileSync(new URL('./interview-cases.json',import.meta.url),'utf8'));
@@ -61,3 +61,18 @@ for(const example of bank.cases){
   }
  });
 }
+
+test('345 original and paraphrased recruiter queries preserve evidence/refusal expectations',()=>{
+ const prefixes=['','Please answer: ','As a recruiter, ','For a baseball front office interview, ','In a structured HR interview, '];
+ for(const item of bank.cases)for(const prefix of prefixes){
+  const question=prefix+item.question;
+  const expected=item.expected_source_ids;
+  const selected=selectSources(question).map(s=>s.id);
+  if(expected.length){
+   assert.equal(shouldRefuse(question),false,item.id+' was overblocked');
+   assert.ok(expected.some(id=>selected.includes(id)),item.id+' missing '+JSON.stringify(expected));
+  }else{
+   assert.ok(shouldRefuse(question)||selected.length===0,item.id+' unsupported question is answerable without refusal');
+  }
+ }
+});
