@@ -1,6 +1,6 @@
 import { SOURCES } from './sources.js';
 const MODEL='@cf/zai-org/glm-4.7-flash';
-const BUILD_VERSION='2026-11-09-curated-interview-synthesis-v4';
+const BUILD_VERSION='2026-11-09-curated-interview-synthesis-v5';
 const MAX_MESSAGES=6;
 const UNVERIFIED=/\b(private reference|personal phone number|his salary|michael.s salary|what salary does|salary does michael want|salary expectation|expected salary|desired salary|salary requirement|compensation expectation|willing to relocate|relocation preference|would relocate|open to relocation|availability to start|when can he start|immediate availability)\b/i;
 const INJECTION=/\b(ignore|override|disregard|forget|bypass)\s+(all\s+|your\s+|previous\s+|earlier\s+|the\s+)?(instructions|rules|system|policy)|\b(system prompt|developer message|hidden instructions|jailbreak|you are now|new instructions|instruction hierarchy)\b|\b(reveal|print|show|dump|repeat|disclose)\s+(your\s+|the\s+)?(system prompt|hidden instructions|developer message)/i;
@@ -14,6 +14,8 @@ const PRIORITIES_SOURCE_IDS=['S23'];
 const PRIORITIES_ANSWER="When priorities compete, I first clarify the requirements and the consequences of delay. I use an Eisenhower style urgency and importance matrix, ask questions, and confirm what matters most with the people involved. Then I sequence the work, communicate trade offs, and own follow through. My documented examples include coordinating distributed Deloitte delivery, implementing county incident reporting, and leading the Abbott RT5 improvement. [S23]";
 const CONFLICT_SOURCE_IDS=['S29'];
 const CONFLICT_ANSWER="I start with Individualization, using theory of mind and mentalization to understand the person's needs and perspective. I look for the overlap where we can meet in the middle, like the common area of a Venn diagram. Then I use Restorative to look for repair and common ground, Learner to adapt, Responsibility and Extreme Ownership to follow through, and Belief to keep the attitude constructive. I use Radical Candor to be direct and respectful, while applying the strengths that fit the situation. This is my stated approach, not a claim about a specific employer conflict outcome. [S29]";
+const STRENGTHS_SOURCE_IDS=['S30'];
+const STRENGTHS_ANSWER="My CliftonStrengths are Restorative, Belief, Responsibility, Learner and Individualization. The same strengths can create blind spots, so I treat them as working hypotheses rather than fixed weaknesses. Restorative can move me into fixing mode too early, Responsibility can lead to overcommitment, Belief can make it harder to release a principled position, Learner can keep me gathering information after a decision is sufficiently supported, and Individualization can lead to over-tailoring a response. I manage those risks by asking whether someone needs understanding or a solution, setting clear ownership and decision boundaries, and inviting direct feedback through Radical Candor. [S30]";
 const ACTIONS=Object.freeze({
  linkedin:{type:'open_url',label:'Open LinkedIn profile',url:'https://www.linkedin.com/in/bolton-2600/',sourceIds:['S8']},
  hardball:{type:'open_url',label:'Open Hardball research',url:'https://mega-byte2600.github.io/hardball/dashboard/',sourceIds:['S1']},
@@ -128,6 +130,7 @@ function shouldRefuse(question){return UNVERIFIED.test(question)||COMPENSATION_U
 function isMLBMotivation(question){return /\bwhy\b.{0,35}\b(work|join|want|interested|apply|pursue)\b.{0,45}\b(mlb|major league baseball|baseball)\b|\bwhy\s+(mlb|major league baseball)\b/i.test(question)}
 function isInterpersonalConflict(question){return /\b(interpersonal conflicts?|conflict with (a|my|your|a teammate|a coworker)|handle conflict with (a|my|your|a teammate|a coworker)|deal with conflicts?|difficult conversation with a teammate|disagreement with a teammate)\b/i.test(question)}
 function isCompetingPriorities(question){return /\b(prioritize|prioritise|priorities|manage|handle|deal with)\b.{0,70}\b(competing|conflicting)\b.{0,35}\b(priorit|projects?|deadlines?)\b|\b(competing|conflicting)\s+(priorities|projects|deadlines)\b/i.test(question)}
+function isStrengthsWeaknessQuestion(question){return /\b(strengths?.{0,45}weakness(?:es)?|weakness(?:es)?.{0,45}strengths?|blind\s*spots?)\b/i.test(question)}
 function actionFor(question){
  const q=question.toLowerCase();
  if(/\b(open|take me to|show me|visit|go to)\b.{0,35}\b(linkedin|profile)\b|\blinkedin profile\b.{0,25}\b(open|visit|show)\b/i.test(q))return ACTIONS.linkedin;
@@ -186,6 +189,10 @@ export default {async fetch(req,env){
  if(isInterpersonalConflict(question)){
   const used=CONFLICT_SOURCE_IDS.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
   return json({answer:CONFLICT_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
+ }
+ if(isStrengthsWeaknessQuestion(question)){
+  const used=STRENGTHS_SOURCE_IDS.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
+  return json({answer:STRENGTHS_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
  }
  if(isCompetingPriorities(question)){
   const used=PRIORITIES_SOURCE_IDS.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
