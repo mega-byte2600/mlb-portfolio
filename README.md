@@ -19,7 +19,7 @@ Independent, MLB-focused visual résumé and real AI Ambassador built for the **
 
 Cloudflare Workers Builds is connected to the GitHub `main` branch and deploys the Worker with `ambassador/wrangler.toml` after a production commit. Live verification remains a release requirement.
 
-The repository quality gate runs on pull requests and pushes to `main`. It runs syntax checks, the complete Node regression suite, static smoke checks, deterministic interview stress checks, retrieval stress checks, credential-pattern scanning and pull-request dependency review. The Worker has a native Cloudflare Cron Trigger every six hours that verifies its bounded agentic contract against the live endpoint. Cloudflare remains both the Worker deployment and recurring verification platform; no scheduled GitHub Action is required.
+The reproducible local release gate runs syntax checks, the complete Node regression suite, static smoke checks, deterministic interview stress checks, retrieval stress checks and credential-pattern scanning before promotion. The Worker has a native Cloudflare Cron Trigger every six hours that verifies its bounded agentic contract against the live endpoint. Cloudflare remains both the Worker deployment and recurring verification platform; GitHub Actions is not required.
 
 For Cloudflare in the existing local `ambassador` directory:
 
@@ -53,7 +53,7 @@ node ambassador/interview-simulations.mjs
 
 ## Release discipline
 
-Every production change is expected to pass the local release gate and the available quality gate before merge. After deployment, the native Cloudflare Cron Trigger verifies the live Worker every six hours. The live check is intentionally narrow and deterministic so a passing result is evidence of the tested release contract, not a claim that every possible browser, model response or external service is defect-free.
+Every production change is expected to pass the local release gate before promotion. After deployment, the native Cloudflare Cron Trigger verifies the live Worker every six hours. The live check is intentionally narrow and deterministic so a passing result is evidence of the tested release contract, not a claim that every possible browser, model response or external service is defect-free.
 
 ## Evidence ethics
 
