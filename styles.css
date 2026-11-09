@@ -7,6 +7,7 @@
 .ledger-main{max-width:1150px;margin:auto;padding:90px clamp(22px,6vw,80px) 110px}.ledger-main h1{font:400 clamp(56px,7vw,92px)/1 var(--serif);letter-spacing:-.055em;margin:20px 0 28px}.ledger-main>.lead{max-width:820px;color:#4d5a5c}.ledger-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:50px 0}.ledger-grid article{background:white;border:1px solid #ced8d1;padding:28px;min-width:0}.ledger-grid h2{font:400 30px/1.2 var(--serif);margin:13px 0}.ledger-grid p{font-size:14px;color:#4b5c5d}.ledger-grid a{color:#235b5b;text-decoration:underline;text-underline-offset:3px}.ledger-tag{font-size:10px;font-weight:850;letter-spacing:.12em;color:#42625b}.ledger-guardrail{font-size:13px;color:#536369;max-width:850px;margin-bottom:30px}@media(max-width:700px){.ledger-grid{grid-template-columns:1fr}.ledger-main{padding-top:56px}.ledger-grid article{padding:22px}}
 /* AI Ambassador: citations and accessible disabled state */
 .source-list{border-top:1px solid #c6d8ce;margin-top:12px;padding-top:10px;display:flex;flex-direction:column;gap:7px;font-size:11px;white-space:normal}.source-list strong{font-size:10px;letter-spacing:.08em;text-transform:uppercase}.source-list a{overflow-wrap:anywhere}.ask-form button:disabled{opacity:.55;cursor:not-allowed}.ask-form input:disabled{background:#f0f1ee;cursor:not-allowed}.chat-log .bubble{overflow-wrap:anywhere}
+.action-button{margin-top:12px;border:1px solid #839b8a;background:#d5f978;color:#0b1720;padding:10px 12px;font:800 11px var(--sans);cursor:pointer}.action-button:hover{background:#bddf5e}.action-button:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
 
 /* Role-specific first-screen proof: compact, keyboard accessible, no layout regressions. */
 .role-proof{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:1510px;margin:38px auto 0}
@@ -30,5 +31,5 @@
 }
 
 /* Illustrated author portrait; visible only when the user-supplied image asset is present. */
-.ambassador-avatar{display:block;flex:none;width:88px;height:88px;object-fit:contain;margin-left:auto;align-self:center;}
-@media(max-width:760px){.chat-head{padding:15px 18px}.ambassador-avatar{width:64px;height:64px}}
+.chat-head>div{min-width:0;flex:1}.chat-head small{display:block;white-space:normal;overflow-wrap:anywhere}.ambassador-avatar{display:block;flex:none;width:88px;height:88px;max-width:88px;object-fit:contain;margin-left:auto;align-self:center;}
+@media(max-width:760px){.chat-head{padding:15px 18px;gap:8px}.ambassador-avatar{width:64px;height:64px;max-width:64px}}
