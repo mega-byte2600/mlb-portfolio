@@ -126,6 +126,25 @@ test('Hardball value proposition preserves human-centered mission and avoids MLB
  assert.equal(statement.trim().split(/\s+/).length,20);
  const source=SOURCES.find(s=>s.id==='S28');
  assert.ok(source.facts.includes(statement));
- assert.match(source.facts,/mission statement/);
+ assert.match(source.facts,/Value proposition/);
+ assert.match(source.facts,/not a claim that clubs lack these practices/i);
  assert.doesNotMatch(statement,/worked for|employed by|MLB championship/i);
+});
+
+test('Hardball FAQs and player-centered mission retrieve approved evidence',()=>{
+ for(const q of ['What is Hardball?','Why does Hardball matter?','What does Hardball do and not do?']){
+  assert.ok(selectSources(q).some(s=>s.id==='S27'),q);
+ }
+ for(const q of ["What is Michael's mission?","Why MLB?","How does healthcare relate to baseball?"]){
+  assert.ok(selectSources(q).some(s=>s.id==='S28'),q);
+ }
+});
+test('FAQ boundaries do not manufacture clinical services or MLB adoption',()=>{
+ const hardball=SOURCES.find(s=>s.id==='S27');
+ const mission=SOURCES.find(s=>s.id==='S28');
+ assert.match(hardball.facts,/does NOT guarantee wins/);
+ assert.match(hardball.facts,/medical advice/);
+ assert.match(mission.facts,/since 2006/);
+ assert.match(mission.facts,/expected June 2027/);
+ assert.match(mission.facts,/not a claim that clubs lack these practices/);
 });
