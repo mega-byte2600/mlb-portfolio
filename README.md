@@ -9,7 +9,7 @@ Independent, MLB-focused visual résumé and real AI Ambassador built for the **
 - **Public site:** GitHub Pages from `main` root. Expected address: https://mega-byte2600.github.io/mlb-portfolio/
 - **Backend:** Cloudflare Worker `ambassador/worker.js`, using Workers AI `@cf/zai-org/glm-4.7-flash`.
 - **Worker URL:** https://mlb-portfolio-ambassador.mlb-ambassador-msb.workers.dev
-- **Evidence:** 20 curated, provenance-labeled public summaries in `ambassador/sources.js`; human-reviewed claims, self-reported outcomes and proposed work must remain distinguished.
+- **Evidence:** 26 curated, provenance-labeled public summaries in `ambassador/sources.js`; human-reviewed claims, self-reported outcomes and proposed work must remain distinguished.
 - **Recruiter actions:** email, LinkedIn, GitHub, evidence ledger, and `Michael_S_Bolton_Baseball_RD_Resume.pdf` (public, role-targeted downloadable PDF).
 - **Browser chat:** `app.js`, four suggested recruiter questions, multi-turn context and cited source links. No credentials in client code, no browser-side AI calls or fabricated demo answers.
 - **Safety:** Worker refuses unsupported/sensitive topics and prompt injections, uses Cloudflare-native approximate rate limiter, and returns curated source facts instead of publishing unrestricted model prose. Cloudflare persisted Worker logs disabled in `wrangler.toml`. External provider data handling is governed by provider terms.
@@ -36,12 +36,16 @@ For GitHub Pages, navigate to **Settings > Pages > Deploy from a branch**, `main
 
 ```bash
 node --check app.js
-node --test ambassador/test.mjs
+node --test ambassador/test.mjs ambassador/interview-eval.mjs
 node tests/smoke.test.js
 node ambassador/stress.mjs
+node ambassador/interview-simulations.mjs
 ```
 
 - 24 backend regression cases passed in an in-session execution harness on November 8, 2026.
+- A/B/C interview evaluation: 69 structured HR/MBA, common recruiter, strengths and security scenarios, plus five phrasing variants each; **95/95 in-session automated assertions passed** across Worker and interview suites.
+- **10,000,000 seeded draws** passed across 345 previously validated question variants; **250,000 actual source selection/refusal calls** separately passed. See [interview simulation results](ambassador/INTERVIEW_SIMULATION_RESULTS.json) and [methodology](ambassador/INTERVIEW_METHOD.md). These are simulated checks, not model training or 10M live prompts.
+- The professional headshot remains LinkedIn-only; it is not embedded as a portfolio portrait or AI avatar.
 - One million deterministic retrieval checks across 27 repeated templates passed after indexed retrieval and relevance threshold improvements; see [ambassador/STRESS_RESULTS.json](ambassador/STRESS_RESULTS.json).
 - These tests do **not** mean one million unique questions, live-model evaluations or trained model weights. Formal Node CI, mobile visual review, browser keyboard checks and end-to-end Cloudflare evaluation must be separately verified.
 - Safety contract: exact refusal `I don't have verified information about that.` for unsupported preferences and injected requests; do not assert MLB affiliation, unauthorized credentials, player statistics or unverified employment.
