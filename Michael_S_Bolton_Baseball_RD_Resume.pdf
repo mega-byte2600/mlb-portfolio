@@ -1,0 +1,123 @@
+%PDF-1.4
+%ASCII
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>
+endobj
+6 0 obj
+<< /Length 5302 >>
+stream
+0.06 0.11 0.16 rg
+0.06 0.11 0.16 rg
+BT /F2 20 Tf 46 752 Td (MICHAEL S. BOLTON, MBA) Tj ET
+0.06 0.11 0.16 rg
+BT /F2 10 Tf 46 725 Td (BASEBALL RESEARCH & DEVELOPMENT ANALYST | APPLIED AI | DECISION INTELLIGENCE) Tj ET
+0.32 0.36 0.40 rg
+BT /F1 8.8 Tf 46 708 Td (michael.bolton.ph@dartmouth.edu | linkedin.com/in/bolton-2600 | github.com/mega-byte2600) Tj ET
+0.18 0.38 0.47 rg
+BT /F2 11 Tf 46 688 Td (PROFESSIONAL PROFILE) Tj ET
+0.72 0.78 0.78 RG 0.5 w 46 684 m 566 684 l S
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 671 Td (U.S. Navy veteran with an MBA and Dartmouth MPH in progress \(expected June 2027\).) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 659 Td (Hands-on builder spanning baseball decision tools, AI/data engineering, quantitative strategy,) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 647 Td (healthcare quality and accountable operations. Public project evidence and scope disclosures online.) Tj ET
+0.18 0.38 0.47 rg
+BT /F2 11 Tf 46 627 Td (SELECTED PROJECTS AND IMPACT) Tj ET
+0.72 0.78 0.78 RG 0.5 w 46 623 m 566 623 l S
+0.06 0.11 0.16 rg
+BT /F2 10 Tf 46 610 Td (HARDBALL | Independent baseball research and decision intelligence) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 596 Td (Built a public analytics workspace connecting performance, player availability, roster choices,) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 584 Td (projections and payroll trade-offs; publishes methods and uncertainty for independent review.) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 572 Td (Author-reported scenarios include mixed-integer optimization and projected WAR comparisons.) Tj ET
+0.32 0.36 0.40 rg
+BT /F1 8.8 Tf 46 560 Td (Evidence: mega-byte2600.github.io/hardball/dashboard/ | github.com/mega-byte2600/hardball) Tj ET
+0.06 0.11 0.16 rg
+BT /F2 10 Tf 46 548 Td (DELOITTE | Senior Solutions Engineer | 2018-2020) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 534 Td (Delivered public-sector AI and Data Engineering modernization across cloud, Python, APIs,) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 522 Td (automation, future-state architecture and Agile engineering/QA coordination.) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 510 Td (Reported approximately 85% lower deployment time on an IRS modernization effort.) Tj ET
+0.06 0.11 0.16 rg
+BT /F2 10 Tf 46 498 Td (ABBOTT LABORATORIES | Operational Excellence and R&D Quality | 2022-2024) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 484 Td (Created an open-source maintenance workflow using Request Tracker; estimated about $250,000) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 472 Td (in annual recovered technician labor capacity at one Santa Rosa laboratory, not cash savings.) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 460 Td (Supported regulated quality improvement and corrective/preventive action \(CAPA\) processes.) Tj ET
+0.06 0.11 0.16 rg
+BT /F2 10 Tf 46 448 Td (SAN LUIS OBISPO COUNTY | Systems Administration / Information Security | 2026) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 434 Td (Built electronic incident reporting in roughly two months, replacing paper/manual workflows.) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 422 Td (Evaluated approximately 8-10 AI-enabled tools and developed governance, privacy and risk controls.) Tj ET
+0.06 0.11 0.16 rg
+BT /F2 10 Tf 46 410 Td (CDC | IT Specialist | 2024-2025) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 396 Td (Modernized 250+ regulated laboratory endpoints; reported 63% lower support ticket backlog.) Tj ET
+0.06 0.11 0.16 rg
+BT /F2 10 Tf 46 384 Td (PFAC TOOLKIT | Dartmouth applied public-health practice project) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 370 Td (Created an evidence-informed patient and family advisory council operating toolkit for leaders.) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 358 Td (Players First is a proposed transfer of these principles to baseball, not an MLB program.) Tj ET
+0.32 0.36 0.40 rg
+BT /F1 8.8 Tf 46 346 Td (Evidence: pfactoolkit.org) Tj ET
+0.18 0.38 0.47 rg
+BT /F2 11 Tf 46 326 Td (EDUCATION AND CREDENTIALS) Tj ET
+0.72 0.78 0.78 RG 0.5 w 46 322 m 566 322 l S
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 309 Td (University of Wyoming | MBA, General Management, 2024) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 297 Td (Dartmouth Geisel School of Medicine | MPH candidate, expected June 2027) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 285 Td (Youngstown State University | Bachelor of Science, Biological Sciences, 2008) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 273 Td (Lean Six Sigma Green Belt | U.S. Navy service, 2002-2007) Tj ET
+0.18 0.38 0.47 rg
+BT /F2 11 Tf 46 253 Td (TECHNICAL AND LEADERSHIP STRENGTHS) Tj ET
+0.72 0.78 0.78 RG 0.5 w 46 249 m 566 249 l S
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 236 Td (Python, JavaScript, SQL, AWS/GCP, data engineering, applied ML, statistical models, API integration,) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 224 Td (verification/validation, process improvement, privacy/AI risk governance, cross-functional delivery.) Tj ET
+0.06 0.11 0.16 rg
+BT /F1 9.4 Tf 46 212 Td (Self-reported languages: English, Spanish, Brazilian Portuguese and French.) Tj ET
+0.32 0.36 0.40 rg
+BT /F1 8.8 Tf 46 192 Td (This public résumé is a role-targeted summary; outcomes are author-reported unless independently) Tj ET
+0.32 0.36 0.40 rg
+BT /F1 8.8 Tf 46 180 Td (demonstrated by linked public project artifacts. No MLB employment or endorsement is claimed.) Tj ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000016 00000 n 
+0000000065 00000 n 
+0000000122 00000 n 
+0000000258 00000 n 
+0000000330 00000 n 
+0000000401 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+5754
+%%EOF
