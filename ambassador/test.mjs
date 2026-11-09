@@ -122,7 +122,7 @@ test('missing rate limiting binding fails closed',async()=>{
 });
 
 test('Hardball value proposition preserves human-centered mission and avoids MLB employment claims',()=>{
- const statement="I help baseball organizations make smarter, evidence-based roster decisions without losing sight of each player’s health, family, and long-term career.";
+ const statement="I bring healthcare, public health, and baseball analytics experience to support teams’ existing efforts to balance performance with player wellbeing.";
  assert.equal(statement.trim().split(/\s+/).length,20);
  const source=SOURCES.find(s=>s.id==='S28');
  assert.ok(source.facts.includes(statement));
