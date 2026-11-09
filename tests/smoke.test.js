@@ -13,7 +13,7 @@ for(const local of ['styles.css','app.js']) {
 }
 assert.ok(fs.existsSync(path.join(root,'.nojekyll')));
 assert.ok(!fs.existsSync(path.join(root,'render.yaml')));
-assert.match(readme,/GitHub Pages only/);
+assert.match(readme,/GitHub Pages from/);
 assert.doesNotMatch(readme,/Deploy to Render/);
 assert.match(html,/https:\/\/mega-byte2600\.github\.io\/hardball\/dashboard\//);
 assert.match(html,/approximately \$250,000 in annual labor-capacity cost avoidance/);
