@@ -119,7 +119,7 @@ test('follow-up open requests resolve the prior approved entity',async()=>{
 test('native scheduled handler verifies the live agentic contract',async()=>{
  const originalFetch=globalThis.fetch;
  globalThis.fetch=async()=>new Response(JSON.stringify({
-  build:'2026-11-09-curated-interview-synthesis-v7',
+  build:'2026-11-09-native-cron-agentic-verification-v8',
   model:'Bounded action proposal',
   action:{type:'open_url',url:'https://www.linkedin.com/in/bolton-2600/'}
  }),{status:200,headers:{'content-type':'application/json'}});
