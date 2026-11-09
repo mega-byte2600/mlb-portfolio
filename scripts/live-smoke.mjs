@@ -25,8 +25,8 @@ async function hash(url){
 const homepage=await (await request(site)).text();
 assert.match(homepage,/AI Ambassador/);
 assert.match(homepage,/Evidence grounded/);
-assert.match(homepage,/conversational and bounded agentic capabilities/);
-assert.match(homepage,/allowlisted public resources/);
+assert.match(homepage,/evidence-grounded AI Ambassador about Michael/);
+assert.match(homepage,/open selected public resources/);
 assert.match(homepage,/Messages are processed by Cloudflare Workers AI/);
 assert.match(homepage,/Ask about Michael/);
 
