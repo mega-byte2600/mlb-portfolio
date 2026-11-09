@@ -1,6 +1,6 @@
 import { SOURCES } from './sources.js';
 const MODEL='@cf/zai-org/glm-4.7-flash';
-const BUILD_VERSION='2026-11-09-live-interview-routing-v2';
+const BUILD_VERSION='2026-11-09-curated-interview-synthesis-v3';
 const MAX_MESSAGES=6;
 const UNVERIFIED=/\b(private reference|personal phone number|his salary|michael.s salary|what salary does|salary does michael want|salary expectation|expected salary|desired salary|salary requirement|compensation expectation|willing to relocate|relocation preference|would relocate|open to relocation|availability to start|when can he start|immediate availability)\b/i;
 const INJECTION=/\b(ignore|override|disregard|forget|bypass)\s+(all\s+|your\s+|previous\s+|earlier\s+|the\s+)?(instructions|rules|system|policy)|\b(system prompt|developer message|hidden instructions|jailbreak|you are now|new instructions|instruction hierarchy)\b|\b(reveal|print|show|dump|repeat|disclose)\s+(your\s+|the\s+)?(system prompt|hidden instructions|developer message)/i;
@@ -10,6 +10,10 @@ const ORIGIN='https://mega-byte2600.github.io';
 const BLOCKED="I don't have verified information about that.";
 const MLB_MOTIVATION_SOURCE_IDS=['S28','S19','S18'];
 const MLB_MOTIVATION_ANSWER="I want to work at MLB because it is an opportunity to extend my evidence-informed healthcare and public-health work into baseball, where decisions affect players, families, organizations and long-term careers. My Dartmouth MPH research and PFAC Toolkit focus on listening to stakeholders, evaluating evidence and translating input into accountable action. Hardball is my baseball research vehicle for examining performance, availability, roster and payroll trade-offs. I want to help MLB make complex decisions more transparent, responsible and useful, while being clear that Players First is a proposed research direction, not an existing MLB program. [S28] [S18] [S19]";
+const PRIORITIES_SOURCE_IDS=['S23'];
+const PRIORITIES_ANSWER="When priorities compete, I first clarify the requirements and the consequences of delay. I use an Eisenhower style urgency and importance matrix, ask questions, and confirm what matters most with the people involved. Then I sequence the work, communicate trade offs, and own follow through. My documented examples include coordinating distributed Deloitte delivery, implementing county incident reporting, and leading the Abbott RT5 improvement. [S23]";
+const CONFLICT_SOURCE_IDS=['S23'];
+const CONFLICT_ANSWER="I deal with interpersonal conflict by clarifying what happened, asking questions, and listening carefully to the people involved before deciding on an action. I assess the constraints, identify the work that must move forward, and agree on a specific next step with clear follow through. If new information changes the picture, I adapt rather than defend an initial assumption. That is the same accountable approach I use when coordinating teams and improving operations. [S23]";
 const STOP=new Set(['who','whose','where','when','which','why','the','and','for','with','what','how','about','does','did','was','are','can','you','his','her','their','tell','me','more','some','would','could','please','michael','bolton','that','this','from','into','your','work','project','experience','background','skill','skills']);
 const tokenise=s=>(s.toLowerCase().match(/[\p{L}\p{N}]+/gu)||[]).filter(w=>w.length>=3&&!STOP.has(w));
 const ALIASES=Object.freeze({
@@ -116,6 +120,8 @@ const REFUSE_UNVERIFIED=/\b(biggest career failure|biggest failure|difficult con
 
 function shouldRefuse(question){return UNVERIFIED.test(question)||COMPENSATION_UNKNOWN.test(question)||REFUSE_UNVERIFIED.test(question)||INJECTION.test(question)}
 function isMLBMotivation(question){return /\bwhy\b.{0,35}\b(work|join|want|interested|apply|pursue)\b.{0,45}\b(mlb|major league baseball|baseball)\b|\bwhy\s+(mlb|major league baseball)\b/i.test(question)}
+function isInterpersonalConflict(question){return /\b(interpersonal conflicts?|conflict with (a|my|your|a teammate|a coworker)|handle conflict with (a|my|your|a teammate|a coworker)|deal with conflicts?|difficult conversation with a teammate|disagreement with a teammate)\b/i.test(question)}
+function isCompetingPriorities(question){return /\b(prioritize|prioritise|priorities|manage|handle|deal with)\b.{0,70}\b(competing|conflicting)\b.{0,35}\b(priorit|projects?|deadlines?)\b|\b(competing|conflicting)\s+(priorities|projects|deadlines)\b/i.test(question)}
 
 const INDEX=SOURCES.map(source=>({source,terms:new Set(tokenise(source.terms+' '+source.title))}));
 const ANCHORS=new Set(['hardball','pfac','eleos','abbott','deloitte','cdc','auris','emporion','linkedin','wyoming','dartmouth','rt5','navy','bds','sabr','gcp']);
@@ -162,6 +168,14 @@ export default {async fetch(req,env){
  if(isMLBMotivation(question)){
   const used=MLB_MOTIVATION_SOURCE_IDS.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
   return json({answer:MLB_MOTIVATION_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
+ }
+ if(isInterpersonalConflict(question)){
+  const used=CONFLICT_SOURCE_IDS.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
+  return json({answer:CONFLICT_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
+ }
+ if(isCompetingPriorities(question)){
+  const used=PRIORITIES_SOURCE_IDS.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
+  return json({answer:PRIORITIES_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
  }
  const sources=selectSources(question,history);
  if(!sources.length)return json({answer:BLOCKED,sources:[],grounded:false,referral:referral(question)});
