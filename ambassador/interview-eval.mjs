@@ -116,6 +116,20 @@ test('follow-up open requests resolve the prior approved entity',async()=>{
  assert.equal(result.action.url,'https://www.linkedin.com/in/bolton-2600/');
 });
 
+test('native scheduled handler verifies the live agentic contract',async()=>{
+ const originalFetch=globalThis.fetch;
+ globalThis.fetch=async()=>new Response(JSON.stringify({
+  build:'2026-11-09-curated-interview-synthesis-v7',
+  model:'Bounded action proposal',
+  action:{type:'open_url',url:'https://www.linkedin.com/in/bolton-2600/'}
+ }),{status:200,headers:{'content-type':'application/json'}});
+ try{
+  await worker.scheduled({cron:'17 */6 * * *'});
+ }finally{
+  globalThis.fetch=originalFetch;
+ }
+});
+
 test('strengths and blind spots use approved CliftonStrengths inference',async()=>{
  const result=await (await worker.fetch(mkRequest('What strengths and weakness do you have?'),fakeEnv('unused'))).json();
  assert.equal(result.model,'Curated evidence synthesis');
