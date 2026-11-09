@@ -28,3 +28,6 @@
  .hero h1{font-size:clamp(44px,10vw,68px)}
  .role-proof p{font-size:13px}
 }
+
+/* Illustrated author portrait; visible only when the user-supplied image asset is present. */
+.ambassador-avatar{display:block;flex:none;width:46px;height:46px;object-fit:contain;border-radius:50%;background:#fff;}
