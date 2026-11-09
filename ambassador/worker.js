@@ -91,6 +91,8 @@ const INTERVIEW_ADDITIONAL_INTENTS=[
 ];
 const REFUSE_UNVERIFIED=/\b(biggest career failure|biggest failure|difficult conflict with (a|his|my|the) manager|why (did|has) (he|you) leave (each|your|his)|reason(s)? for leaving (each|previous)|salary (expect|want|require)|expected compensation|relocat(e|ion|ing)|when (are|is) (you|he) available to start|available to start|introvert(ed)?|extrovert(ed)?|personality diagnosis|clinical personality|makes (you|him) angry|angry at work|always arrive (at work )?exactly on time|ever been late (to work)?|favorite childhood pet|home address|private mobile|personal (phone|mobile))\b/i;
 
+function shouldRefuse(question){return UNVERIFIED.test(question)||REFUSE_UNVERIFIED.test(question)||INJECTION.test(question)}
+
 const INDEX=SOURCES.map(source=>({source,terms:new Set(tokenise(source.terms+' '+source.title))}));
 const ANCHORS=new Set(['hardball','pfac','eleos','abbott','deloitte','cdc','auris','emporion','linkedin','wyoming','dartmouth','rt5','navy','bds','sabr','gcp']);
 function rankSources(words){
@@ -129,7 +131,7 @@ export default {async fetch(req,env){
  const question=body?.question;
  if(typeof question!=='string'||question.trim().length<2||question.length>350)return json({error:'Question must be 2–350 characters'},400);
  const history=Array.isArray(body.history)?body.history.slice(-MAX_MESSAGES).filter(m=>m&&['user','assistant'].includes(m.role)&&typeof m.content==='string'&&m.content.length<=1000).map(m=>({role:m.role,content:m.content})):[];
- if(UNVERIFIED.test(question)||REFUSE_UNVERIFIED.test(question)||INJECTION.test(question))return json({answer:BLOCKED,sources:[],grounded:false,referral:referral(question)});
+ if(shouldRefuse(question))return json({answer:BLOCKED,sources:[],grounded:false,referral:referral(question)});
  const sources=selectSources(question,history);
  if(!sources.length)return json({answer:BLOCKED,sources:[],grounded:false,referral:referral(question)});
  if(!env.RATE_LIMITER)return json({error:'Rate limiting service not configured'},503);
@@ -161,4 +163,4 @@ export default {async fetch(req,env){
  return json({answer:evidence,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Workers AI evidence selection',referral:referral(question)});
 
  }};
-export {selectSources,tokenise,referral};
+export {selectSources,tokenise,referral,shouldRefuse};
