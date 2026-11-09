@@ -2,12 +2,12 @@ import { SOURCES } from './sources.js';
 const MODEL='@cf/zai-org/glm-4.7-flash';
 const MAX_MESSAGES=6;
 const UNVERIFIED=/\b(private reference|personal phone number|his salary|michael.s salary|what salary does|salary does michael want|salary expectation|expected salary|desired salary|salary requirement|compensation expectation|willing to relocate|relocation preference|would relocate|open to relocation|availability to start|when can he start|immediate availability)\b/i;
-const INJECTION=/(ignore|override|disregard|forget|reveal|print|show|disclose|dump|repeat|bypass|system prompt|developer message|hidden instructions|roleplay|jailbreak|you are now|new instructions|instruction hierarchy)/i;
+const INJECTION=/\b(ignore|override|disregard|forget|bypass)\s+(all\s+|your\s+|previous\s+|earlier\s+|the\s+)?(instructions|rules|system|policy)|\b(system prompt|developer message|hidden instructions|jailbreak|you are now|new instructions|instruction hierarchy)\b|\b(reveal|print|show|dump|repeat|disclose)\s+(your\s+|the\s+)?(system prompt|hidden instructions|developer message)/i;
 const UNSUPPORTED=/\b(world series mvp|world series ring|yankees employee|worked for (the )?(yankees|dodgers|mets|red sox)|played in (the )?mlb|mlb player|mlb champion|mlb championship winner|15 more wins|increased (the )?(yankees|dodgers).{0,40}wins|10 years (of )?(mlb|baseball)|relocat(e|ion|ing)|salary|compensation expectation)\b/i;
 const FOLLOW_UP=/^(and |also |but |why |how |what about |can you |could you |does that |did that |is that |tell me more|explain|expand|elaborate|in baseball|in mlb|for a club|for the team|how would that|what did that)/i;
 const ORIGIN='https://mega-byte2600.github.io';
 const BLOCKED="I don't have verified information about that.";
-const STOP=new Set(['the','and','for','with','what','how','about','does','did','was','are','can','you','his','her','their','tell','me','more','some','would','could','please','michael','bolton','that','this','from','into','your','work','project','experience','background','skill','skills']);
+const STOP=new Set(['who','whose','where','when','which','why','the','and','for','with','what','how','about','does','did','was','are','can','you','his','her','their','tell','me','more','some','would','could','please','michael','bolton','that','this','from','into','your','work','project','experience','background','skill','skills']);
 const tokenise=s=>(s.toLowerCase().match(/[\p{L}\p{N}]+/gu)||[]).filter(w=>w.length>=3&&!STOP.has(w));
 const ALIASES=Object.freeze({
  'risk management':'eleos governance risk register ai policy nist privacy security',
@@ -23,7 +23,13 @@ const ALIASES=Object.freeze({
  'where can i connect':'linkedin email contact professional',
  'proof':'evidence reproducibility sources github',
  'explain your impact':'deloitte abbott cdc impact outcomes',
- 'tech stack':'python javascript cloud api github engineering'
+ 'tech stack':'python javascript cloud api github engineering',
+ 'role fit':'hardball baseball ai engineering leadership',
+ 'fit for':'hardball baseball ai engineering leadership',
+ 'why hire':'hardball baseball ai engineering leadership',
+ 'measurable improvement':'deloitte abbott cdc cost avoidance deployment backlog',
+ 'led teams':'deloitte offshore onshore team coordination project leadership',
+ 'where led':'deloitte offshore onshore team coordination'
 });
 const REFERRALS=Object.freeze({
  github:{label:'Explore public code and methodology on GitHub',url:'https://github.com/mega-byte2600'},
@@ -39,21 +45,26 @@ function referral(question){
  return REFERRALS.contact;
 }
 function expand(s){let out=s.toLowerCase();for(const [key,terms] of Object.entries(ALIASES))if(out.includes(key))out+=' '+terms;return out;}
+const INDEX=SOURCES.map(source=>({source,terms:new Set(tokenise(source.terms+' '+source.title))}));
+const ANCHORS=new Set(['hardball','pfac','eleos','abbott','deloitte','cdc','auris','emporion','linkedin','wyoming','dartmouth','rt5','navy','bds','sabr','gcp']);
+function rankSources(words){
+ const selected=[...words];
+ return INDEX.map(({source,terms})=>{
+  let score=0,anchor=false;
+  for(const word of selected){if(terms.has(word)){score++;if(ANCHORS.has(word))anchor=true}}
+  return {source,score,anchor};
+ }).filter(x=>x.score>=2||x.anchor)
+ .sort((a,b)=>b.score-a.score||a.source.id.localeCompare(b.source.id,undefined,{numeric:true}));
+}
 function selectSources(question,history=[]){
  const qwords=new Set(tokenise(expand(question)));
  const previous=history.filter(m=>m.role==='user').slice(-1)[0]?.content||'';
  const priorWords=new Set(tokenise(expand(previous)));
  const isFollowup=Boolean(previous)&&(FOLLOW_UP.test(question.trim())||/\b(that|those|this|it|they|them|previous|earlier)\b/i.test(question));
- const rank=(words)=>SOURCES.map(source=>{
-   const terms=new Set(tokenise(source.terms+' '+source.title));
-   return {source,score:[...words].reduce((n,w)=>n+(terms.has(w)?1:0),0)};
- }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score||a.source.id.localeCompare(b.source.id,undefined,{numeric:true}));
- const direct=rank(qwords).map(x=>x.source);
+ const direct=rankSources(qwords).map(x=>x.source);
  if(isFollowup){
-   // Carry the two most relevant sources from the most recent user question
-   // before adding current-question context; never assume earlier assistant text is evidence.
-   const carried=rank(priorWords).slice(0,2).map(x=>x.source);
-   return [...new Map([...carried,...direct].map(s=>[s.id,s])).values()].slice(0,4);
+  const carried=rankSources(priorWords).slice(0,2).map(x=>x.source);
+  return [...new Map([...carried,...direct].map(s=>[s.id,s])).values()].slice(0,4);
  }
  if(!direct.length&&/\b(hi|hello|hey|who is|introduce|overview|background|tell me about|professional summary|career summary|qualifications)\b/i.test(question))return [SOURCES.find(s=>s.id==='S6')];
  return direct.slice(0,4);
