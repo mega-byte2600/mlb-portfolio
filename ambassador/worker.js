@@ -134,6 +134,7 @@ function selectSources(question,history=[]){
  const entity=ENTITY_PRIORITY.find(rule=>rule.re.test(question));
  const ids=[...(entity?.ids||[]),...(intent?.ids||[])];
  const curated=ids.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
+ if(intent?.ids?.length===1&&intent.ids[0]==='S19')return curated;
  const direct=[...new Map([...curated,...rankSources(qwords).map(x=>x.source)].map(s=>[s.id,s])).values()];
  if(isFollowup){
   const carried=rankSources(priorWords).slice(0,2).map(x=>x.source);
