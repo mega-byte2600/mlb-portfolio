@@ -10,7 +10,7 @@ for(const id of ['main','hardball','evidence','players','ask','chat-log','ask-fo
 }
 for(const local of ['styles.css','app.js']) {
   assert.ok(fs.existsSync(path.join(root,local)),`missing ${local}`);
-  assert.match(html,new RegExp('(?:href|src)="'+local.replace('.','\.')+'"'));
+  assert.match(html,new RegExp('(?:href|src)="' + local.replace('.','\\.') + '(?:\\?[^"]+)?\\"'));
 }
 assert.ok(fs.existsSync(path.join(root,'.nojekyll')));
 assert.ok(!fs.existsSync(path.join(root,'render.yaml')));
@@ -34,7 +34,7 @@ assert.match(ledger,/confidential and intentionally excluded/);
 assert.match(ledger,/not been implemented or endorsed/);
 assert.match(css,/@media\(max-width:760px\)\{\.site-header\{height:auto/);
 for(const href of [...html.matchAll(/href="([^"]+)"/g)].map(m=>m[1])) {
-  if(!href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) assert.ok(fs.existsSync(path.join(root,href.split('#')[0])), 'broken local link '+href);
+  if(!href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) assert.ok(fs.existsSync(path.join(root,href.split(/[?#]/)[0])), 'broken local link '+href);
 }
 console.log('PASS: local links, mobile navigation, claim register and provenance safeguards');
 
@@ -76,6 +76,7 @@ assert.match(html,/Download Michael’s Résumé \(PDF\)/);
 assert.doesNotMatch(html,/onerror=.*ambassador-avatar/,'required portrait must not silently disappear when the asset is missing');
 assert.match(html,/class="chat-head"><div>[\s\S]*class="ambassador-avatar"/,'portrait must follow the ambassador heading in the header markup');
 assert.match(css,/\.ambassador-avatar\{[^}]*width:88px[^}]*height:88px[^}]*margin-left:auto/,'portrait must be a right-aligned responsive header asset');
+assert.match(css,/\.chat-head>div\{min-width:0;flex:1\}/,'ambassador header text must shrink before the portrait on mobile');
 assert.match(html,/Contact Michael/);
 const wrangler=read('ambassador/wrangler.toml'),worker=read('ambassador/worker.js');
 assert.match(wrangler,/\[\[ratelimits\]\]/);
