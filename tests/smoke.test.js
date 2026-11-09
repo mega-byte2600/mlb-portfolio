@@ -66,6 +66,7 @@ assert.equal(pdf.length,337704,'résumé bytes must match the supplied three-pag
 assert.equal(crypto.createHash('sha256').update(pdf).digest('hex'),'50b167559fa820e41476f03c913e4f154b086374212d89daaf5e403c055d36c1','résumé must match the supplied PDF exactly');
 assert.equal(crypto.createHash('sha256').update(avatar).digest('hex'),'012f759e8e8339125d8750d90d07d6d94e6d4820571c106b2e9bdab7084b7bf4','avatar must match the supplied illustration exactly');
 assert.match(html,/BASEBALL RESEARCH &amp; DEVELOPMENT ANALYST/);
+assert.doesNotMatch(html,/I am a scientist/,'portfolio must not make an unapproved scientist identity claim');
 assert.match(html,/class="role-proof"/);
 assert.equal((html.match(/data-question=/g)||[]).length,4,'four recruiter chat questions required');
 assert.match(html,new RegExp('href="'+pdfName.replace('.','\\.')+'" download'));
