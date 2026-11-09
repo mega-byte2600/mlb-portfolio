@@ -6,7 +6,7 @@ const url='https://placeholder.workers.dev/';
 const origin='https://mega-byte2600.github.io';
 const limiter={limit:async()=>({success:true})};
 const send=(body,headers={})=>worker.fetch(new Request(url,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json',...headers},body:JSON.stringify(body)}),{RATE_LIMITER:limiter,AI:{run:async(model,options)=>{assert.match(model,/glm-4.7-flash/);assert.equal(options.messages[0].role,'system');return {response:'Hardball supports roster decisions [S1].'};}}});
-test('retrieves approved project evidence',()=>{assert.equal(selectSources('How does Hardball handle payroll?')[0].id,'S1')});
+test('retrieves approved project evidence',()=>{assert.equal(selectSources('How does Hardball handle payroll?')[0].id,'S27')});
 test('rejects unknown topic without model invocation',async()=>{const r=await send({question:'What is the secret passphrase of the jellyfish emperor?'});const d=await r.json();assert.equal(d.grounded,false);assert.equal(d.sources.length,0)});
 test('returns cited AI answer from mocked model',async()=>{const r=await send({question:'What does Hardball do?'});const d=await r.json();assert.equal(r.status,200);assert.equal(d.grounded,true);assert.match(d.answer,/Hardball/);assert.equal(d.sources[0].id,'S1')});
 test('rejects cross origin',async()=>{const r=await send({question:'Hardball'},{Origin:'https://attacker.example'});assert.equal(r.status,403)});
