@@ -21,7 +21,7 @@ const ACTIONS=Object.freeze({
  linkedin:{type:'open_url',label:'Open LinkedIn profile',url:'https://www.linkedin.com/in/bolton-2600/',sourceIds:['S8']},
  hardball:{type:'open_url',label:'Open Hardball research',url:'https://mega-byte2600.github.io/hardball/dashboard/',sourceIds:['S1']},
  resume:{type:'open_url',label:'Download Michael’s Résumé (PDF)',url:'https://mega-byte2600.github.io/mlb-portfolio/Michael_Bolton_Resume_Nov_2026.pdf',sourceIds:['S7']},
- email:{type:'compose_email',label:'Prepare résumé email',url:'mailto:?subject=Michael%20Bolton%20portfolio&body=Hello%2C%0A%0AI%20am%20sharing%20Michael%20Bolton%27s%20professional%20portfolio%20and%20résumé.%0A%0APortfolio%3A%20https%3A%2F%2Fmega-byte2600.github.io%2Fmlb-portfolio%2F%0ARésumé%20(PDF)%3A%20https%3A%2F%2Fmega-byte2600.github.io%2Fmlb-portfolio%2FMichael_Bolton_Resume_Nov_2026.pdf%0A%0ABest%2C',sourceIds:['S7']}
+ email:{type:'compose_email',label:'Prepare résumé email draft',url:'mailto:?subject=Michael%20Bolton%20portfolio&body=Hello%2C%0A%0AI%20am%20sharing%20Michael%20Bolton%27s%20professional%20portfolio%20and%20résumé.%0A%0APortfolio%3A%20https%3A%2F%2Fmega-byte2600.github.io%2Fmlb-portfolio%2F%0ARésumé%20(PDF)%3A%20https%3A%2F%2Fmega-byte2600.github.io%2Fmlb-portfolio%2FMichael_Bolton_Resume_Nov_2026.pdf%0A%0ABest%2C',sourceIds:['S7']}
 });
 const STOP=new Set(['who','whose','where','when','which','why','the','and','for','with','what','how','about','does','did','was','are','can','you','his','her','their','tell','me','more','some','would','could','please','michael','bolton','that','this','from','into','your','work','project','experience','background','skill','skills']);
 const tokenise=s=>(s.toLowerCase().match(/[\p{L}\p{N}]+/gu)||[]).filter(w=>w.length>=3&&!STOP.has(w));
