@@ -1,80 +1,63 @@
-# Michael S. Bolton — MLB Portfolio
+# Michael S. Bolton | Baseball Research & Development Analyst Portfolio
 
-A responsive, independent static portfolio showcasing Hardball, selected engineering outcomes, and the proposed Players First philosophy. **This is a different repository and website from Hardball.** No existing project is modified.
+Independent, MLB-focused visual résumé and real AI Ambassador built for the **Bring Your Resume to Life** challenge. Target title: **Baseball Research & Development Analyst** (working project choice; verify alignment with actual recruiting opportunities). The entire expanded challenge is locked in [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md). The release-blocker register is [AUDIT_GAPS.md](AUDIT_GAPS.md).
 
-## Local preview
+**This is a separate repository and deployment from Hardball. Do not modify `mega-byte2600/hardball`.**
 
-From this folder:
+## Architecture
+
+- **Public site:** GitHub Pages from `main` root. Expected address: https://mega-byte2600.github.io/mlb-portfolio/
+- **Backend:** Cloudflare Worker `ambassador/worker.js`, using Workers AI `@cf/zai-org/glm-4.7-flash`.
+- **Worker URL:** https://mlb-portfolio-ambassador.mlb-ambassador-msb.workers.dev
+- **Evidence:** 20 curated, provenance-labeled public summaries in `ambassador/sources.js`; human-reviewed claims, self-reported outcomes and proposed work must remain distinguished.
+- **Recruiter actions:** email, LinkedIn, GitHub, evidence ledger, and `Michael_S_Bolton_Baseball_RD_Resume.pdf` (public, role-targeted downloadable PDF).
+- **Browser chat:** `app.js`, four suggested recruiter questions, multi-turn context and cited source links. No credentials in client code, no browser-side AI calls or fabricated demo answers.
+- **Safety:** Worker refuses unsupported/sensitive topics and prompt injections, uses Cloudflare-native approximate rate limiter, and returns curated source facts instead of publishing unrestricted model prose. Cloudflare persisted Worker logs disabled in `wrangler.toml`. External provider data handling is governed by provider terms.
+- **Privacy:** no home address, telephone number, confidential employer documents, protected health or player data, private chats or access tokens in the public knowledge library.
+
+## Setup and deploy
+
+A previous deployment returned a real model response (user screenshot), but the **latest security and retrieval changes have not yet been independently verified live**. GitHub commits do not automatically update Cloudflare.
+
+For Cloudflare in the existing local `ambassador` directory:
 
 ```bash
-python3 -m http.server 8080
+curl -fL https://raw.githubusercontent.com/mega-byte2600/mlb-portfolio/main/ambassador/worker.js -o worker.js
+curl -fL https://raw.githubusercontent.com/mega-byte2600/mlb-portfolio/main/ambassador/sources.js -o sources.js
+curl -fL https://raw.githubusercontent.com/mega-byte2600/mlb-portfolio/main/ambassador/wrangler.toml -o wrangler.toml
+npx wrangler deploy
 ```
 
-Open `http://localhost:8080/`.
+This is a **new version**: it requires the `RATE_LIMITER` binding defined in `wrangler.toml`. The Cloudflare rate-limiting API is approximate per data center; it is not a global strict limit or user authentication. If missing, the Worker deliberately fails closed with HTTP 503.
 
-## Publish with GitHub Pages only (no Render, no GitHub Actions workflow)
+For GitHub Pages, navigate to **Settings > Pages > Deploy from a branch**, `main`, `/ (root)`. Branch publishing does not require a custom GitHub Actions workflow. Actual Pages availability and responsive user experience still require live validation.
 
-1. Create a **new public repository** named `mlb-portfolio` under your `mega-byte2600` account. Do not create it inside or rename `hardball`.
-2. Upload **the contents of this folder** to the **root of the new repository**, not the enclosing directory. At minimum, `index.html`, `styles.css`, `app.js`, `.nojekyll`, `README.md`, and `tests/` should be at root.
-3. In the new repository, open **Settings → Pages → Build and deployment** and choose **Deploy from a branch**, branch `main`, folder `/ (root)`, then save. This uses GitHub Pages' branch publishing. Do **not** add a custom GitHub Actions workflow.
-4. After Pages reports publishing, visit `https://mega-byte2600.github.io/mlb-portfolio/` (expected URL after publishing, **not currently verified live**).
-5. Check the site on desktop and mobile. Check that Hardball opens independently and that the evidence guide says it is a curated prototype, not a production AI agent.
-
-> GitHub Pages may use internal build infrastructure for branch publishing; these instructions do not configure a billable custom Actions workflow. The website needs no server-side code, API credentials, or Render service.
-
-## Static structure
-
-- `index.html`: portfolio page
-- `styles.css`: responsive design and accessibility styling
-- `app.js`: browser-only, deterministic evidence guide
-- `evidence.html`: publicly navigable claim-by-claim evidence and limitations ledger
-- `.nojekyll`: use files as authored (no Jekyll processing)
-- `tests/smoke.test.js`: static/evidence assertions
-
-Links are absolute URLs for external destinations and relative paths for site assets, so the site works under the `/mlb-portfolio/` GitHub Pages project subpath.
-
-## Provenance and factual safeguards
-
-- **Hardball:** use its [live dashboard](https://mega-byte2600.github.io/hardball/dashboard/) and [repository](https://github.com/mega-byte2600/hardball) as the canonical source. Portfolio doesn't duplicate Hardball's models or figures.
-- **2018 AI demonstration:** link to Google Drive recording; this shows object-detection API integration, not training a proprietary foundation model. Link access depends on Drive permissions.
-- **Abbott:** approximately $250,000 estimated **annual labor-capacity cost avoidance at the Santa Rosa site**; do not describe as cash savings or executed rollout across all sites.
-- **MBA strategy simulation:** first-place team result among ~14 competitors per firsthand account; course and simulation are documented, but the final ranking report was not retained.
-- **Players First:** proposed baseball application grounded in completed public health work; no active MLB pilot or team affiliation.
-- **SCOPE and languages:** dates, role and four-language fluency are user-provided. Do not imply Stanford degree enrollment.
-- **Confidentiality:** never commit Abbott's confidential presentation, Deloitte client assets, patient information, player medical information, API tokens, or full personal documents without review.
-
-## Evidence guide is not a generative AI ambassador
-
-The question box works entirely in the visitor's browser with six curated response groups. It does not call an external API, transmit user questions, or make free-form generative claims. Do not market it as a production AI chatbot. A future AI ambassador requires its own grounded source architecture and security review.
-
-## Test
+## Tests
 
 ```bash
 node --check app.js
+node --test ambassador/test.mjs
 node tests/smoke.test.js
+node ambassador/stress.mjs
 ```
 
-This is **prototype v0.3**: static automated checks are not a substitute for visual, device, or accessibility testing before publication.
+- 24 backend regression cases passed in an in-session execution harness on November 8, 2026.
+- One million deterministic retrieval checks across 27 repeated templates passed after indexed retrieval and relevance threshold improvements; see [ambassador/STRESS_RESULTS.json](ambassador/STRESS_RESULTS.json).
+- These tests do **not** mean one million unique questions, live-model evaluations or trained model weights. Formal Node CI, mobile visual review, browser keyboard checks and end-to-end Cloudflare evaluation must be separately verified.
+- Safety contract: exact refusal `I don't have verified information about that.` for unsupported preferences and injected requests; do not assert MLB affiliation, unauthorized credentials, player statistics or unverified employment.
 
-## v0.3 changes
+## What remains
 
-- Kept section navigation visible on mobile.
-- Added linked evidence ledger separating public demonstrations, restricted records, firsthand accounts and unimplemented proposals.
-- Strengthened local link and mobile navigation smoke checks.
-- No production deployment and no changes to other repositories.
+- Confirm external links, GitHub Pages publication, latest Cloudflare redeployment and four **live** recruiter chat scenarios.
+- Audit claim text against original source evidence and any reviewed public LinkedIn content, including link permissions.
+- Complete 390px and desktop accessibility/UX testing, real-world colleague 60-second scan and documentation of two alternative directions before final submission.
+- Verify the public PDF renders and downloads properly from GitHub Pages; Git PDF structure and cross-reference offsets were checked.
+- Submit only after the [acceptance checklist](ACCEPTANCE_CRITERIA.md) is actually validated.
 
-## Real AI Ambassador: Cloudflare Workers AI (open-weight model)
+## Evidence ethics
 
-The static portfolio is served on GitHub Pages. **AI chat requires a separate Cloudflare Worker**. No Nous subscription, vector database, Replit, Node server, or client-side API secret is required. The Worker uses the Cloudflare AI binding and `@cf/zai-org/glm-4.7-flash`, a currently supported open-weight multilingual model.
+Hardball is public research, not a guaranteed model of wins. Deloitte, Abbott, CDC and county impact numbers are author-reported unless independently corroborated. Abbott's ~$250K figure refers to estimated capacity cost avoidance at Santa Rosa, not cash savings. Player-centered leadership is a proposed application of PFAC work, not an MLB-approved program. The author's Navy BUD/S preparation is **not** completion and he does not claim an MLB championship. The public evidence ledger makes these distinctions inspectable. Restricted employer documents and personal data are not reproduced.
 
-**To deploy the Worker when Cloudflare access is available:**
+## Design constraints
 
-1. Sign into a Cloudflare account with Workers AI enabled. The documented free AI usage allocation is 10,000 neurons per day, subject to Cloudflare plan limits. No promise of unlimited free usage.
-2. From the `ambassador` directory, run `npx wrangler login` and `npx wrangler deploy`. The `wrangler.toml` already includes the model AI binding; no API key goes in the browser or repository.
-3. Copy the resulting public `https://mlb-portfolio-ambassador.<subdomain>.workers.dev` endpoint into the single line in `ambassador-config.js` and commit that change. This is **not a secret**.
-4. Enable GitHub Pages in the `mlb-portfolio` repository's Settings → Pages by publishing the `main` branch from the repository root. Confirm both the page and Worker endpoint are reachable.
-5. Run `node --test ambassador/test.mjs` and `node tests/smoke.test.js`. Perform real-model adversarial evaluations and mobile-browser QA after deployment; mocks do not prove a model's actual reliability.
-
-The public evidence library is maintained in `ambassador/sources.js`. It is a hand-curated allowlist; restricted files and private resume data are excluded. Only selected excerpts enter the prompt. Each answer must include a matching citation marker and the server provides the link and status. **This reduces risk but does not mathematically guarantee truthfulness; a language model may still misstate the curated context.** Test representative recruiter questions and prompt-injection cases before inviting real recruiters. Unknown topics are declined; personal or confidential information should not be sent. Visitors' messages are transmitted to Cloudflare Workers AI when the backend is enabled, not retained by this app intentionally.
-
-**Deployment status:** the frontend remains in an explicit disabled state until `ambassador-config.js` contains a verified Worker URL. Never describe the chat as live before that point.
+Preserve working Hardball showcase, evidence ledger, Players First proposal, separate project repository, and visual identity. Keep target role and three evidence-backed capabilities easy to identify in the 60-second scan. Never invent experience, degrees, dates, roles, metrics or references.
