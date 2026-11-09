@@ -1,5 +1,6 @@
 import { SOURCES } from './sources.js';
 const MODEL='@cf/zai-org/glm-4.7-flash';
+const BUILD_VERSION='2026-11-09-live-interview-routing';
 const MAX_MESSAGES=6;
 const UNVERIFIED=/\b(private reference|personal phone number|his salary|michael.s salary|what salary does|salary does michael want|salary expectation|expected salary|desired salary|salary requirement|compensation expectation|willing to relocate|relocation preference|would relocate|open to relocation|availability to start|when can he start|immediate availability)\b/i;
 const INJECTION=/\b(ignore|override|disregard|forget|bypass)\s+(all\s+|your\s+|previous\s+|earlier\s+|the\s+)?(instructions|rules|system|policy)|\b(system prompt|developer message|hidden instructions|jailbreak|you are now|new instructions|instruction hierarchy)\b|\b(reveal|print|show|dump|repeat|disclose)\s+(your\s+|the\s+)?(system prompt|hidden instructions|developer message)/i;
@@ -181,7 +182,7 @@ export default {async fetch(req,env){
  const used=sources.filter(s=>cited.includes(s.id)).slice(0,3);
  if(!used.length)return json({answer:BLOCKED,sources:[],grounded:false,referral:referral(question)});
  const evidence=used.map(s=>s.facts+' ['+s.id+']').join('\n\n');
- return json({answer:evidence,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Workers AI evidence selection',referral:referral(question)});
+ return json({answer:evidence,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Workers AI evidence selection',build:BUILD_VERSION,referral:referral(question)});
 
  }};
 export {selectSources,tokenise,referral,shouldRefuse};
