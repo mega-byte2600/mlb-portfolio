@@ -24,6 +24,7 @@ const ALIASES=Object.freeze({
  'proof':'evidence reproducibility sources github',
  'explain your impact':'deloitte abbott cdc impact outcomes',
  'tech stack':'python javascript cloud api github engineering',
+ 'ai experience':'2018 google cloud object detection eleos governance',
  'role fit':'hardball baseball ai engineering leadership',
  'fit for':'hardball baseball ai engineering leadership',
  'why hire':'hardball baseball ai engineering leadership',
@@ -66,7 +67,7 @@ function selectSources(question,history=[]){
   const carried=rankSources(priorWords).slice(0,2).map(x=>x.source);
   return [...new Map([...carried,...direct].map(s=>[s.id,s])).values()].slice(0,4);
  }
- if(!direct.length&&/\b(hi|hello|hey|who is|introduce|overview|background|tell me about|professional summary|career summary|qualifications)\b/i.test(question))return [SOURCES.find(s=>s.id==='S6')];
+ if(!direct.length&&(/^(hi|hello|hey)$/i.test(question.trim())||/\b(who is michael|introduce michael|overview of michael|his background|professional summary|career summary|his qualifications|tell me about michael|tell me about his career)\b/i.test(question)))return [SOURCES.find(s=>s.id==='S6')];
  return direct.slice(0,4);
 }
 function json(data,status=200,origin=ORIGIN){return new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json; charset=utf-8','access-control-allow-origin':origin,'vary':'Origin','cache-control':'no-store','x-content-type-options':'nosniff','access-control-allow-methods':'POST, OPTIONS','access-control-allow-headers':'Content-Type'}})}
