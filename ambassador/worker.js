@@ -80,6 +80,15 @@ const INTERVIEW_INTENTS=[
  {re:/\b(what (can|could) (you|he) contribute.{0,40}(baseball|club)|without professional playing)\b/i,ids:['S19','S20']},
  {re:/\b(mba (strategy|simulation)|wyoming strategy)\b/i,ids:['S5','S13']}
 ];
+
+const INTERVIEW_ADDITIONAL_INTENTS=[
+ {re:/\b(verify.{0,30}improvement.{0,20}sustain|improvement (was|is|remains) sustained|sustain(ed|able) improvement)\b/i,ids:['S17']},
+ {re:/\b(walk me through.{0,15}(your|his) (resume|résumé)|resume walkthrough|career walkthrough)\b/i,ids:['S6','S13']},
+ {re:/\b(professional accomplishment.{0,20}measurable|measurable professional accomplishment)\b/i,ids:['S5','S17']},
+ {re:/\b(work did (you|he) lead at the county|led (at|in) (the )?county)\b/i,ids:['S10']},
+ {re:/\b(unsure of an answer|uncertain of an answer|don't know an answer|do not know an answer)\b/i,ids:['S23','S19']},
+ {re:/\b(world series ring|world series championship|won (an? )?mlb world series)\b/i,ids:['S20']}
+];
 const REFUSE_UNVERIFIED=/\b(biggest career failure|biggest failure|difficult conflict with (a|his|my|the) manager|why (did|has) (he|you) leave (each|your|his)|reason(s)? for leaving (each|previous)|salary (expect|want|require)|expected compensation|relocat(e|ion|ing)|when (are|is) (you|he) available to start|available to start|introvert(ed)?|extrovert(ed)?|personality diagnosis|clinical personality|makes (you|him) angry|angry at work|always arrive (at work )?exactly on time|ever been late (to work)?|favorite childhood pet|home address|private mobile|personal (phone|mobile))\b/i;
 
 const INDEX=SOURCES.map(source=>({source,terms:new Set(tokenise(source.terms+' '+source.title))}));
@@ -98,7 +107,7 @@ function selectSources(question,history=[]){
  const previous=history.filter(m=>m.role==='user').slice(-1)[0]?.content||'';
  const priorWords=new Set(tokenise(expand(previous)));
  const isFollowup=Boolean(previous)&&(FOLLOW_UP.test(question.trim())||/\b(that|those|this|it|they|them|previous|earlier)\b/i.test(question));
- const intent=INTERVIEW_INTENTS.find(rule=>rule.re.test(question));
+ const intent=INTERVIEW_ADDITIONAL_INTENTS.find(rule=>rule.re.test(question))||INTERVIEW_INTENTS.find(rule=>rule.re.test(question));
  const curated=intent?intent.ids.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean):[];
  const direct=[...new Map([...curated,...rankSources(qwords).map(x=>x.source)].map(s=>[s.id,s])).values()];
  if(isFollowup){
