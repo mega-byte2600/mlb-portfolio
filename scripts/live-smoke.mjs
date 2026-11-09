@@ -26,7 +26,7 @@ const homepage=await (await request(site)).text();
 assert.match(homepage,/AI Ambassador/);
 assert.match(homepage,/Evidence grounded/);
 assert.match(homepage,/Ask the AI Ambassador about Michael/);
-assert.match(homepage,/open selected public resources/);
+assert.match(homepage,/opens selected public resources/);
 assert.match(homepage,/Messages are processed by Cloudflare Workers AI/);
 assert.match(homepage,/Ask about Michael/);
 
