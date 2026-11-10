@@ -3,6 +3,8 @@
   "type": "module",
   "scripts": {
     "test": "node --test test.mjs interview-eval.mjs",
+    "test:adversarial": "node --test adversarial-eval.mjs",
+    "test:all": "node --test test.mjs interview-eval.mjs adversarial-eval.mjs",
     "test:interview": "node --test interview-eval.mjs",
     "stress:interview": "node interview-simulations.mjs",
     "stress:direct-10m": "node interview-stress.mjs 10000000"
