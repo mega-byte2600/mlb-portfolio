@@ -16,6 +16,7 @@ const MLB_MOTIVATION_SOURCE_IDS=['S28','S19','S18'];
 const MLB_MOTIVATION_ANSWER="I want to work at MLB because it is an opportunity to extend my evidence-informed healthcare and public-health work into baseball, where decisions affect players, families, organizations and long-term careers. My Dartmouth MPH research and PFAC Toolkit focus on listening to stakeholders, evaluating evidence and translating input into accountable action. Hardball is my baseball research vehicle for examining performance, availability, roster and payroll trade-offs. I want to help MLB make complex decisions more transparent, responsible and useful, while being clear that Players First is a proposed research direction, not an existing MLB program. [S28] [S18] [S19]";
 const HEALTHCARE_ANSWER="I chose healthcare because it gave me a high-stakes setting where technology, evidence and human judgment have to work together. My experience spans healthcare operations, quality improvement, regulated environments and applied AI governance, and I am now extending that perspective through Dartmouth’s public-health research into baseball and professional sports. [S28] [S10] [S17]";
 const APPLICATION_ANSWER="Yes. Michael has built and contributed to several applications and public prototypes. Hardball is a public baseball decision-support application; the PFAC Toolkit is a public evidence-informed healthcare engagement tool; Emporion is a paper-only investment and risk research system; and his earlier SigiSwanchi work involved launching an app in Brazil. His public repositories and portfolio show the code, methods and documented limits. [S1] [S2] [S4] [S14] [S15]";
+const EDUCATION_ANSWER="My education combines biological science, business, public health and applied technology. I earned a bachelor's degree in Biological Sciences from Youngstown State University in 2008 and an MBA in General Management from the University of Wyoming in 2024. I am currently completing a Dartmouth Geisel Master of Public Health, expected in June 2027, and I also hold a Lean Six Sigma Green Belt. [S13]";
 const LANGUAGE_ANSWER="Yes. Michael is fluent in English, Spanish, French and Brazilian Portuguese. He lived in Brazil in summer 2012, used Portuguese every day and launched the SigiSwanchi app there. He also spent two years interpreting Spanish in an emergency-room setting. He is also proficient in Italian, Tagalog, Arabic and Hebrew. [S14]";
 const PRIORITIES_SOURCE_IDS=['S23'];
 const PRIORITIES_ANSWER="When priorities compete, I first clarify the requirements and the consequences of delay. I use an Eisenhower style urgency and importance matrix, ask questions, and confirm what matters most with the people involved. Then I sequence the work, communicate trade offs, and own follow through. My documented examples include coordinating distributed Deloitte delivery, implementing county incident reporting, and leading the Abbott RT5 improvement. [S23]";
@@ -137,6 +138,7 @@ function shouldRefuse(question){return UNVERIFIED.test(question)||COMPENSATION_U
 function isMLBMotivation(question){return /\bwhy\b.{0,35}\b(work|join|want|interested|apply|pursue)\b.{0,45}\b(mlb|major league baseball|baseball)\b|\bwhy\s+(mlb|major league baseball)\b/i.test(question)}
 function isHealthcareMotivation(question){return /\bwhy\s+(did|does|do|choose|chose|select|selected)\b.{0,35}\bhealthcare\b|\bwhy\s+healthcare\b|\b(chose|choose|selected|selecting)\s+healthcare\b/i.test(question)}
 function isApplicationExperience(question){return /\b(any|what|which|your|his)\b.{0,35}\b(experience|background)\b.{0,20}\b(developing|building|creating|engineering)\b.{0,20}\b(apps?|applications?|software|systems?)\b|\b(develop|built|build|created|create|engineer|engineering)\b.{0,25}\b(apps?|applications?)\b/i.test(question)}
+function isEducationQuestion(question){return /\b(tell me about|what is|what are|describe|walk me through)\b.{0,30}\b(your|his|michael.s)?\s*(education|degrees?|academic background|credentials?)\b|\b(education|degrees?|academic background)\b.{0,20}\b(michael|his|your)\b/i.test(question)}
 function isInterpersonalConflict(question){return /\b(interpersonal conflicts?|conflict with (a|my|your|a teammate|a coworker)|handle conflict with (a|my|your|a teammate|a coworker)|deal with conflicts?|difficult conversation with a teammate|disagreement with a teammate)\b/i.test(question)}
 function isCompetingPriorities(question){return /\b(prioritize|prioritise|priorities|manage|handle|deal with)\b.{0,70}\b(competing|conflicting)\b.{0,35}\b(priorit|projects?|deadlines?)\b|\b(competing|conflicting)\s+(priorities|projects|deadlines)\b/i.test(question)}
 function isStrengthsWeaknessQuestion(question){return /\b(strengths?.{0,45}weakness(?:es)?|weakness(?:es)?.{0,45}strengths?|blind\s*spots?)\b/i.test(question)}
@@ -236,6 +238,10 @@ export default {async scheduled(controller){
   const used=['S1','S2','S4','S14','S15'].map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
   return json({answer:APPLICATION_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
  }
+ if(isEducationQuestion(question)){
+  const used=[SOURCES.find(s=>s.id==='S13')].filter(Boolean);
+  return json({answer:EDUCATION_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
+ }
  if(isInterpersonalConflict(question)){
   const used=CONFLICT_SOURCE_IDS.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
   return json({answer:CONFLICT_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
@@ -288,4 +294,4 @@ export default {async scheduled(controller){
  return json({answer:conversational,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Workers AI conversational synthesis',build:BUILD_VERSION,referral:referral(question)});
 
  }};
-export {selectSources,tokenise,referral,shouldRefuse,isApplicationExperience};
+export {selectSources,tokenise,referral,shouldRefuse,isApplicationExperience,isEducationQuestion};
