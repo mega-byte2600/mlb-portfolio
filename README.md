@@ -38,6 +38,7 @@ For GitHub Pages, navigate to **Settings > Pages > Deploy from a branch**, `main
 
 ```bash
 node --check app.js
+node scripts/release-gate.mjs
 node --test ambassador/test.mjs ambassador/interview-eval.mjs
 node tests/smoke.test.js
 node ambassador/stress.mjs
@@ -51,6 +52,7 @@ node ambassador/interview-simulations.mjs
 - One million deterministic retrieval checks across 27 repeated templates passed after indexed retrieval and relevance threshold improvements; see [ambassador/STRESS_RESULTS.json](ambassador/STRESS_RESULTS.json).
 - These tests do **not** mean one million unique questions, live-model evaluations or trained model weights. Mobile visual review and browser keyboard checks remain human release checks; live Pages and Cloudflare evaluation are covered by `scripts/live-smoke.mjs` in scheduled and manually runnable production verification.
 - Safety contract: exact refusal `I don't have verified information about that.` for unsupported preferences and injected requests; do not assert MLB affiliation, unauthorized credentials, player statistics or unverified employment.
+- The formal adversarial decision and automation boundary are recorded in [ADR-0007](docs/ADR-0007-adversarial-worker-evaluation.md). The repository gate is canonical; Cloudflare Workers Builds must invoke it before deployment, and that external dashboard setting is not considered verified until its build log proves it.
 
 ## Release discipline
 
