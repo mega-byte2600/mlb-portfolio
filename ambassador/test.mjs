@@ -163,3 +163,16 @@ test('language questions retrieve the author-confirmed language profile',()=>{
  assert.match(languageSource.facts,/Spanish interpreter in an emergency-room setting for two years/i);
  assert.match(languageSource.facts,/high proficiency in Italian, Tagalog, Arabic and Hebrew/i);
 });
+
+
+test('language answer is conversational and omits internal provenance language',async()=>{
+ const r=await send({question:'Do you speak any foreign languages?'});
+ const d=await r.json();
+ assert.equal(r.status,200);
+ assert.equal(d.grounded,true);
+ assert.match(d.answer,/^Yes\./);
+ assert.match(d.answer,/Spanish, French and Brazilian Portuguese/);
+ assert.match(d.answer,/emergency-room/);
+ assert.doesNotMatch(d.answer,/author-confirmed|corroboration pathway|should not be upgraded/i);
+ assert.deepEqual(d.sources.map(s=>s.id),['S14']);
+});
