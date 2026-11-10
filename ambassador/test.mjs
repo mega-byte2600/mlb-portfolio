@@ -150,17 +150,14 @@ test('FAQ boundaries do not manufacture clinical services or MLB adoption',()=>{
 });
 
 
-test('language questions retrieve the precise approved LinkedIn proficiency record',()=>{
+test('language questions retrieve the author-confirmed language profile',()=>{
  const languageSource=SOURCES.find(s=>s.id==='S14');
  assert.ok(languageSource);
  for(const q of ['What languages does Michael speak?','Is Michael fluent in Spanish?','Does Michael speak French?','Does Michael speak Brazilian Portuguese?','What is his Arabic proficiency?','What is his Hebrew proficiency?','Does he speak Italian?','Does he speak Tagalog?']){
   assert.ok(selectSources(q).some(s=>s.id==='S14'),q);
  }
- assert.match(languageSource.facts,/Spanish.*full professional proficiency/i);
- assert.match(languageSource.facts,/French.*native or bilingual proficiency/i);
- assert.match(languageSource.facts,/Brazilian Portuguese.*native or bilingual proficiency/i);
- assert.match(languageSource.facts,/Arabic.*professional working proficiency/i);
- assert.match(languageSource.facts,/Modern Hebrew.*professional working proficiency/i);
- assert.match(languageSource.facts,/Tagalog.*limited working proficiency/i);
- assert.match(languageSource.facts,/Italian.*limited working proficiency/i);
+ assert.match(languageSource.facts,/fluency in English, Spanish, French and Brazilian Portuguese/i);
+ assert.match(languageSource.facts,/used Brazilian Portuguese every day/i);
+ assert.match(languageSource.facts,/Spanish interpreter in an emergency-room setting for two years/i);
+ assert.match(languageSource.facts,/high proficiency in Italian, Tagalog, Arabic and Hebrew/i);
 });
