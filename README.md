@@ -1,4 +1,4 @@
-# Michael S. Bolton | Baseball Research & Development Analyst Portfolio
+# Michael S. Bolton | Applied AI, Advanced Analytics & Baseball R&D
 
 Independent, MLB-focused visual résumé and real AI Ambassador built for the **Bring Your Resume to Life** challenge. Target title: **Baseball Research & Development Analyst** (working project choice; verify alignment with actual recruiting opportunities). The entire expanded challenge is locked in [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md). The release-blocker register is [AUDIT_GAPS.md](AUDIT_GAPS.md).
 
@@ -44,7 +44,8 @@ node ambassador/stress.mjs
 node ambassador/interview-simulations.mjs
 ```
 
-- A/B/C interview evaluation: 69 structured HR/MBA, common recruiter, strengths and security scenarios, plus phrasing variants; the current local release gate includes **102 passing tests**, including distinct motivation, priorities, conflict, strengths/blind-spot and bounded-action cases.
+- A/B/C interview evaluation: 69 structured HR/MBA, common recruiter, strengths and security scenarios, plus phrasing variants; the current local release gate includes **125 passing tests**, including distinct motivation, priorities, conflict, strengths/blind-spot and bounded-action cases.
+- Adversarial evaluation: 20 new category-based probes cover prompt injection, citation laundering, privacy, unsupported affiliation, entity confusion, answer separation, follow-up contamination, action allowlisting, confirmation boundaries, malformed input and malicious model output. The suite is informed by established open-source evaluation patterns from [NVIDIA/garak](https://github.com/NVIDIA/garak), [confident-ai/deepeval](https://github.com/confident-ai/deepeval) and [promptfoo](https://github.com/promptfoo/promptfoo); it is a portfolio-specific Worker contract suite, not a claim of exhaustive model evaluation.
 - **10,000,000 seeded draws** passed across 345 previously validated question variants; **250,000 actual source selection/refusal calls** separately passed. See [interview simulation results](ambassador/INTERVIEW_SIMULATION_RESULTS.json) and [methodology](ambassador/INTERVIEW_METHOD.md). These are simulated checks, not model training or 10M live prompts.
 - The professional headshot remains LinkedIn-only; it is not embedded as a portfolio portrait or AI avatar.
 - One million deterministic retrieval checks across 27 repeated templates passed after indexed retrieval and relevance threshold improvements; see [ambassador/STRESS_RESULTS.json](ambassador/STRESS_RESULTS.json).
