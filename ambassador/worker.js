@@ -226,10 +226,10 @@ export default {async scheduled(controller){
  if(isCompetingPriorities(question)){
   const used=PRIORITIES_SOURCE_IDS.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
   return json({answer:PRIORITIES_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
+ }
  if(/\b(what languages|which languages|foreign languages|additional languages|language skills|speak any languages|multilingual|bilingual|fluent in which languages)\b/i.test(question)){
   const used=[SOURCES.find(s=>s.id==='S14')].filter(Boolean);
   return json({answer:LANGUAGE_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
- }
  }
  const action=actionFor(question,history);
  if(action){
