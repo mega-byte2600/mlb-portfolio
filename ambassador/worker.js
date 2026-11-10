@@ -10,6 +10,7 @@ const FOLLOW_UP=/^(and |also |but |why |how |what about |can you |could you |doe
 const ORIGIN='https://mega-byte2600.github.io';
 const BLOCKED="I don't have verified information about that.";
 const MLB_MOTIVATION_SOURCE_IDS=['S28','S19','S18'];
+const LANGUAGE_ANSWER="Yes. Michael is fluent in English, Spanish, French and Brazilian Portuguese. He lived in Brazil in summer 2012, used Portuguese every day and launched the SigiSwanchi app there. He also spent two years interpreting Spanish in an emergency-room setting. He reports high proficiency in Italian, Tagalog, Arabic and Hebrew. [S14]";
 const MLB_MOTIVATION_ANSWER="I want to work at MLB because it is an opportunity to extend my evidence-informed healthcare and public-health work into baseball, where decisions affect players, families, organizations and long-term careers. My Dartmouth MPH research and PFAC Toolkit focus on listening to stakeholders, evaluating evidence and translating input into accountable action. Hardball is my baseball research vehicle for examining performance, availability, roster and payroll trade-offs. I want to help MLB make complex decisions more transparent, responsible and useful, while being clear that Players First is a proposed research direction, not an existing MLB program. [S28] [S18] [S19]";
 const PRIORITIES_SOURCE_IDS=['S23'];
 const PRIORITIES_ANSWER="When priorities compete, I first clarify the requirements and the consequences of delay. I use an Eisenhower style urgency and importance matrix, ask questions, and confirm what matters most with the people involved. Then I sequence the work, communicate trade offs, and own follow through. My documented examples include coordinating distributed Deloitte delivery, implementing county incident reporting, and leading the Abbott RT5 improvement. [S23]";
@@ -214,6 +215,10 @@ export default {async scheduled(controller){
  if(isCompetingPriorities(question)){
   const used=PRIORITIES_SOURCE_IDS.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
   return json({answer:PRIORITIES_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
+ if(/\b(what languages|which languages|foreign languages|additional languages|language skills|speak any languages|multilingual|bilingual|fluent in which languages)\b/i.test(question)){
+  const used=[SOURCES.find(s=>s.id==='S14')].filter(Boolean);
+  return json({answer:LANGUAGE_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
+ }
  }
  const action=actionFor(question,history);
  if(action){
