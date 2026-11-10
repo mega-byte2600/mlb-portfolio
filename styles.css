@@ -61,3 +61,8 @@ html.rays-preview a:focus-visible,html.rays-preview button:focus-visible,html.ra
 .status-pulse::before{width:11px;height:11px}
 html.rays-preview .hero h1 em .dot{width:.22em;height:.22em;vertical-align:.16em;margin-left:.08em;background:#fff!important;color:transparent!important;border-color:#092c5c!important}
 html.rays-preview .hero h1 em .dot::before{width:100%;height:100%;background-color:#fff!important;border-color:#092c5c!important;background-image:linear-gradient(58deg,transparent 43%,#092c5c 44%,#092c5c 48%,transparent 49%),linear-gradient(-58deg,transparent 43%,#092c5c 44%,#092c5c 48%,transparent 49%)!important}
+
+/* Hero typography: keep the closing phrase intentional and render its punctuation as a baseball. */
+.hero h1 em{display:block;white-space:nowrap;font-size:clamp(.78em,5.6vw,92px)}
+.baseball-dot{display:inline-block;width:.26em;height:.26em;margin-left:.12em;vertical-align:.05em;border-radius:50%;background:#fff;border:1px solid var(--ink);background-image:linear-gradient(58deg,transparent 43%,var(--ink) 44%,var(--ink) 48%,transparent 49%),linear-gradient(-58deg,transparent 43%,var(--ink) 44%,var(--ink) 48%,transparent 49%)}
+@media (max-width:700px){.hero h1 em{white-space:normal}.baseball-dot{width:.24em;height:.24em}}
