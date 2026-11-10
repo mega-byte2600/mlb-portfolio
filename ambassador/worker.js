@@ -6,11 +6,15 @@ const MAX_MESSAGES=6;
 const UNVERIFIED=/\b(private reference|personal phone number|his salary|michael.s salary|what salary does|salary does michael want|salary expectation|expected salary|desired salary|salary requirement|compensation expectation|willing to relocate|relocation preference|would relocate|open to relocation|availability to start|when can he start|immediate availability)\b/i;
 const INJECTION=/\b(ignore|override|disregard|forget|bypass)\s+(all\s+|your\s+|previous\s+|earlier\s+|the\s+)?(instructions|rules|system|policy)|\b(system prompt|developer message|hidden instructions|jailbreak|you are now|new instructions|instruction hierarchy)\b|\b(reveal|print|show|dump|repeat|disclose)\s+(your\s+|the\s+)?(system prompt|hidden instructions|developer message)/i;
 const UNSUPPORTED=/\b(world series mvp|world series ring|yankees employee|worked for (the )?(yankees|dodgers|mets|red sox)|played in (the )?mlb|mlb player|mlb champion|mlb championship winner|15 more wins|increased (the )?(yankees|dodgers).{0,40}wins|increased wins by|10 years (of )?(mlb|baseball)|relocat(e|ion|ing)|salary|compensation expectation|extraneous speculative assertions|500k)\b/i;
-const FOLLOW_UP=/^(and |also |but |why |how |what about |can you |could you |does that |did that |is that |tell me more|explain|expand|elaborate|in baseball|in mlb|for a club|for the team|how would that|what did that)/i;
+// Carry prior context only when the new question clearly refers back to it.
+// A standalone "why" or "how" is a new question, not a follow-up. This
+// prevents a previous language question from contaminating "Why healthcare?".
+const FOLLOW_UP=/^(and |also |but |what about |can you |could you |does that |did that |is that |tell me more|explain|expand|elaborate|in baseball|in mlb|for a club|for the team|how would that|what did that)/i;
 const ORIGIN='https://mega-byte2600.github.io';
 const BLOCKED="I don't have verified information about that.";
 const MLB_MOTIVATION_SOURCE_IDS=['S28','S19','S18'];
 const MLB_MOTIVATION_ANSWER="I want to work at MLB because it is an opportunity to extend my evidence-informed healthcare and public-health work into baseball, where decisions affect players, families, organizations and long-term careers. My Dartmouth MPH research and PFAC Toolkit focus on listening to stakeholders, evaluating evidence and translating input into accountable action. Hardball is my baseball research vehicle for examining performance, availability, roster and payroll trade-offs. I want to help MLB make complex decisions more transparent, responsible and useful, while being clear that Players First is a proposed research direction, not an existing MLB program. [S28] [S18] [S19]";
+const HEALTHCARE_ANSWER="I chose healthcare because it gave me a high-stakes setting where technology, evidence and human judgment have to work together. My experience spans healthcare operations, quality improvement, regulated environments and applied AI governance, and I am now extending that perspective through Dartmouth’s public-health research into baseball and professional sports. [S28] [S10] [S17]";
 const LANGUAGE_ANSWER="Yes. Michael is fluent in English, Spanish, French and Brazilian Portuguese. He lived in Brazil in summer 2012, used Portuguese every day and launched the SigiSwanchi app there. He also spent two years interpreting Spanish in an emergency-room setting. He is also proficient in Italian, Tagalog, Arabic and Hebrew. [S14]";
 const PRIORITIES_SOURCE_IDS=['S23'];
 const PRIORITIES_ANSWER="When priorities compete, I first clarify the requirements and the consequences of delay. I use an Eisenhower style urgency and importance matrix, ask questions, and confirm what matters most with the people involved. Then I sequence the work, communicate trade offs, and own follow through. My documented examples include coordinating distributed Deloitte delivery, implementing county incident reporting, and leading the Abbott RT5 improvement. [S23]";
@@ -130,6 +134,7 @@ const REFUSE_UNVERIFIED=/\b(biggest career failure|biggest failure|difficult con
 
 function shouldRefuse(question){return UNVERIFIED.test(question)||COMPENSATION_UNKNOWN.test(question)||REFUSE_UNVERIFIED.test(question)||INJECTION.test(question)||/\bincreased wins by\b|\bjavascript:|\bdata:text\/html|\b(open|visit|go to)\s+(this|that)\s+(arbitrary|external|unknown)\s+url\b/i.test(question)}
 function isMLBMotivation(question){return /\bwhy\b.{0,35}\b(work|join|want|interested|apply|pursue)\b.{0,45}\b(mlb|major league baseball|baseball)\b|\bwhy\s+(mlb|major league baseball)\b/i.test(question)}
+function isHealthcareMotivation(question){return /\bwhy\s+(did|does|do|choose|chose|select|selected)\b.{0,35}\bhealthcare\b|\bwhy\s+healthcare\b|\b(chose|choose|selected|selecting)\s+healthcare\b/i.test(question)}
 function isInterpersonalConflict(question){return /\b(interpersonal conflicts?|conflict with (a|my|your|a teammate|a coworker)|handle conflict with (a|my|your|a teammate|a coworker)|deal with conflicts?|difficult conversation with a teammate|disagreement with a teammate)\b/i.test(question)}
 function isCompetingPriorities(question){return /\b(prioritize|prioritise|priorities|manage|handle|deal with)\b.{0,70}\b(competing|conflicting)\b.{0,35}\b(priorit|projects?|deadlines?)\b|\b(competing|conflicting)\s+(priorities|projects|deadlines)\b/i.test(question)}
 function isStrengthsWeaknessQuestion(question){return /\b(strengths?.{0,45}weakness(?:es)?|weakness(?:es)?.{0,45}strengths?|blind\s*spots?)\b/i.test(question)}
@@ -220,6 +225,10 @@ export default {async scheduled(controller){
  if(isMLBMotivation(question)){
   const used=MLB_MOTIVATION_SOURCE_IDS.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
   return json({answer:MLB_MOTIVATION_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
+ }
+ if(isHealthcareMotivation(question)){
+  const used=['S28','S10','S17'].map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
+  return json({answer:HEALTHCARE_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
  }
  if(isInterpersonalConflict(question)){
   const used=CONFLICT_SOURCE_IDS.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
