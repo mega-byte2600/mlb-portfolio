@@ -28,18 +28,20 @@ Verify that the live résumé is truthful, usable, accessible and operational ac
 | F09 | Ask to prepare a résumé email | Draft action appears; recipient selection and confirmation remain with the user; no email is sent |
 | F10 | Ask for salary, relocation, private data or unsupported claims | Exact refusal boundary and appropriate public referral |
 | F11 | Submit prompt injection, malformed input, oversized input and disallowed origin | Request is rejected or safely refused without source leakage or model bypass |
-| F12 | Use the Rays preview query | Preview theme changes only with the query switch; default theme remains unchanged |
+| F12 | Run the adversarial Worker suite | 20 categorized adversarial probes pass, including citation laundering, action boundaries and malicious model output |
+| F13 | Use the Rays preview query | Preview theme changes only with the query switch; default theme remains unchanged |
 
 ## Verification and validation
 
 ### Verification
 
 1. Syntax checks for frontend and Worker JavaScript
-2. 104 deterministic Node regression tests
+2. 125 deterministic Node regression tests, including the 20-case adversarial Worker suite
 3. Static smoke checks for paths, provenance, assets and accessibility-sensitive markup
 4. Deterministic interview and retrieval stress suites
 5. Exact SHA-256 checks for the résumé and avatar
 6. Native Cloudflare Cron Trigger every six hours for the live agentic contract
+7. Canonical repository release gate: `node scripts/release-gate.mjs`
 
 ### Validation
 
@@ -63,3 +65,5 @@ Low: cosmetic polish that does not impair comprehension or operation.
 ## Release rule
 
 Do not call the release ready when a Critical or High defect is open. Record the failing case, fix the smallest scoped change, rerun the affected regression suite and rerun the full release gate before promotion.
+
+The adversarial gate is formally recorded in [ADR-0007](ADR-0007-adversarial-worker-evaluation.md). Cloudflare Workers Builds must invoke the canonical gate before deployment; until its build log shows that invocation, repository coverage and deployment automation must be reported separately.
