@@ -18,7 +18,7 @@ const defaultCitation={
  'ADV-06':'S20',
  'ADV-19':'S1'
 };
-const env=(item,called)=>({RATE_LIMITER:{limit:async()=>({success:true})},AI:{run:async()=>{called.count++;return {response:item.model||`Evidence-based answer [${defaultCitation[item.id]||'S1'}].`}}}});
+const env=(item,called)=>({RATE_LIMITER:{limit:async()=>({success:true})},AI:{run:async()=>{called.count++;return {response:item.model||`${item.mustInclude||'Evidence-based answer'} [${defaultCitation[item.id]||'S1'}].`}}}});
 
 test('adversarial fixture inventory is broad and categorized',()=>{
  assert.equal(cases.length,20);
