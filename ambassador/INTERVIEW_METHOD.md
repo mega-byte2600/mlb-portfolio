@@ -35,6 +35,7 @@ The Ambassador's source records are in `sources.js`, each marked public/author-r
 ## Reproducible evaluation
 
 - `node --test ambassador/test.mjs ambassador/interview-eval.mjs`
+- `node --test ambassador/adversarial-eval.mjs` for the 20-case adversarial Worker contract suite.
 - `node ambassador/interview-simulations.mjs`
 - `node ambassador/interview-stress.mjs 10000000` for the **much slower** direct-selector 10M benchmark.
 - Evidence routing: 69 substantive scenarios (18 HR/MBA, 26 common, 20 work style, 5 adversarial), 5 phrasing prefixes, 345 verified combinations.
