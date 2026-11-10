@@ -158,6 +158,8 @@ test('language questions retrieve the author-confirmed language profile',()=>{
  }
  assert.match(languageSource.facts,/fluency in English, Spanish, French and Brazilian Portuguese/i);
  assert.match(languageSource.facts,/used Brazilian Portuguese every day/i);
+ assert.match(languageSource.facts,/lived in Brazil in summer 2012/i);
+ assert.match(languageSource.facts,/launched the SigiSwanchi app there/i);
  assert.match(languageSource.facts,/Spanish interpreter in an emergency-room setting for two years/i);
  assert.match(languageSource.facts,/high proficiency in Italian, Tagalog, Arabic and Hebrew/i);
 });
