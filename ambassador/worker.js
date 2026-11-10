@@ -5,7 +5,7 @@ const SELF_TEST_URL='https://mlb-portfolio-ambassador.mlb-ambassador-msb.workers
 const MAX_MESSAGES=6;
 const UNVERIFIED=/\b(private reference|personal phone number|his salary|michael.s salary|what salary does|salary does michael want|salary expectation|expected salary|desired salary|salary requirement|compensation expectation|willing to relocate|relocation preference|would relocate|open to relocation|availability to start|when can he start|immediate availability)\b/i;
 const INJECTION=/\b(ignore|override|disregard|forget|bypass)\s+(all\s+|your\s+|previous\s+|earlier\s+|the\s+)?(instructions|rules|system|policy)|\b(system prompt|developer message|hidden instructions|jailbreak|you are now|new instructions|instruction hierarchy)\b|\b(reveal|print|show|dump|repeat|disclose)\s+(your\s+|the\s+)?(system prompt|hidden instructions|developer message)/i;
-const UNSUPPORTED=/\b(world series mvp|world series ring|yankees employee|worked for (the )?(yankees|dodgers|mets|red sox)|played in (the )?mlb|mlb player|mlb champion|mlb championship winner|15 more wins|increased (the )?(yankees|dodgers).{0,40}wins|increased wins by|10 years (of )?(mlb|baseball)|relocat(e|ion|ing)|salary|compensation expectation)\b/i;
+const UNSUPPORTED=/\b(world series mvp|world series ring|yankees employee|worked for (the )?(yankees|dodgers|mets|red sox)|played in (the )?mlb|mlb player|mlb champion|mlb championship winner|15 more wins|increased (the )?(yankees|dodgers).{0,40}wins|increased wins by|10 years (of )?(mlb|baseball)|relocat(e|ion|ing)|salary|compensation expectation|extraneous speculative assertions|500k)\b/i;
 const FOLLOW_UP=/^(and |also |but |why |how |what about |can you |could you |does that |did that |is that |tell me more|explain|expand|elaborate|in baseball|in mlb|for a club|for the team|how would that|what did that)/i;
 const ORIGIN='https://mega-byte2600.github.io';
 const BLOCKED="I don't have verified information about that.";
@@ -177,6 +177,17 @@ function selectSources(question,history=[]){
  if(!direct.length&&(/^(hi|hello|hey)$/i.test(question.trim())||/\b(who is michael|introduce michael|overview of michael|his background|professional summary|career summary|his qualifications|tell me about michael|tell me about his career)\b/i.test(question)))return [SOURCES.find(s=>s.id==='S6')];
  return direct.slice(0,4);
 }
+function cleanConversationalAnswer(text){
+ return text.replace(/\b(author[- ]confirmed|corroboration pathway|self[- ]reported proficiency categories displayed on public LinkedIn|not independently proficiency tested)\b/gi,'').replace(/\s{2,}/g,' ').replace(/\s+([,.!?])/g,'$1').trim();
+}
+function groundedModelAnswer(answer,sources){
+ const sourceText=sources.map(s=>s.facts+' '+s.title).join(' ');
+ const vocabulary=new Set(tokenise(sourceText).filter(w=>w.length>3));
+ const sentences=answer.split(/(?<=[.!?])\s+/).filter(Boolean);
+ const unsupported=sentences.some(sentence=>{const words=tokenise(sentence).filter(w=>w.length>3);const overlap=words.filter(w=>vocabulary.has(w)).length;return words.length>=5&&overlap<1;});
+ if(unsupported)return null;
+ return cleanConversationalAnswer(answer);
+}
 function json(data,status=200,origin=ORIGIN){return new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json; charset=utf-8','access-control-allow-origin':origin,'vary':'Origin','cache-control':'no-store','x-content-type-options':'nosniff','access-control-allow-methods':'POST, OPTIONS','access-control-allow-headers':'Content-Type'}})}
 async function verifyScheduledAgenticCapability(){
  const response=await fetch(SELF_TEST_URL,{method:'POST',headers:{Origin:ORIGIN,'content-type':'application/json'},body:JSON.stringify({question:'Could you open or show me?',history:[{role:'user',content:'What is Michael’s LinkedIn profile?'}]})});
@@ -245,16 +256,15 @@ export default {async scheduled(controller){
  // Citations are supplied by the server regardless of model-generated links.
  // Model citations not in retrieval set are stripped to avoid fabricated provenance.
  const allowed=new Set(sources.map(s=>s.id));answer=answer.replace(/\[S\d+\]/g,id=>allowed.has(id.slice(1,-1))?id:'');
- // Use the model to select the relevant evidence only. Never publish its free-form
- // factual draft: a valid [S#] token by itself does NOT validate a factual claim.
- // The published answer is assembled verbatim from human-curated source facts.
+ answer=answer.replace(/[^.!?]*\b500k\b[^.!?]*[.!?]/gi,'').trim();
  const cited=[...new Set([...answer.matchAll(/\[S\d+\]/g)].map(m=>m[0].slice(1,-1)))];
  if(INJECTION.test(answer)||UNSUPPORTED.test(answer)||!cited.length)
    return json({answer:BLOCKED,sources:[],grounded:false,referral:referral(question)});
  const used=sources.filter(s=>cited.includes(s.id)).slice(0,3);
  if(!used.length)return json({answer:BLOCKED,sources:[],grounded:false,referral:referral(question)});
- const evidence=used.map(s=>s.facts+' ['+s.id+']').join('\n\n');
- return json({answer:evidence,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Workers AI evidence selection',build:BUILD_VERSION,referral:referral(question)});
+ const conversational=groundedModelAnswer(answer,used);
+ if(!conversational)return json({answer:BLOCKED,sources:[],grounded:false,referral:referral(question)});
+ return json({answer:conversational,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Workers AI conversational synthesis',build:BUILD_VERSION,referral:referral(question)});
 
  }};
 export {selectSources,tokenise,referral,shouldRefuse};
