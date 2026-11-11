@@ -230,21 +230,23 @@ export default {async scheduled(controller){
  let body;try{body=await req.json()}catch{return json({error:'Malformed JSON'},400)}
  const question=body?.question;
  if(typeof question!=='string'||question.trim().length<2||question.length>350)return json({error:'Question must be 2–350 characters'},400);
+ const resolvedIntent=classifyIntent(question);
+ const intentIs=name=>resolvedIntent.name===name&&resolvedIntent.confidence>=0.55&&resolvedIntent.margin>=0.08;
  const history=Array.isArray(body.history)?body.history.slice(-MAX_MESSAGES).filter(m=>m&&['user','assistant'].includes(m.role)&&typeof m.content==='string'&&m.content.length<=1000).map(m=>({role:m.role,content:m.content})):[];
  if(shouldRefuse(question))return json({answer:BLOCKED,sources:[],grounded:false,referral:referral(question)});
  if(isMLBMotivation(question)){
   const used=MLB_MOTIVATION_SOURCE_IDS.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
   return json({answer:MLB_MOTIVATION_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
  }
- if(isHealthcareMotivation(question)){
+ if(isHealthcareMotivation(question)||intentIs('healthcare_motivation')){
   const used=['S28','S10','S17'].map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
   return json({answer:HEALTHCARE_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
  }
- if(isApplicationExperience(question)){
+ if(isApplicationExperience(question)||(intentIs('application_experience')&&/\b(develop|development|developer|developing|built|build|applications?|apps?|software)\b/i.test(question)&&!/\b(hardball|pfac|emporion|ztoy|sigi\s*swanchi)\b/i.test(question))){
   const used=['S1','S2','S4','S14','S15'].map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
   return json({answer:APPLICATION_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
  }
- if(isEducationQuestion(question)){
+ if(isEducationQuestion(question)||(intentIs('education')&&!/\b(quantitative|decision|support|apply|baseball|role)\b/i.test(question))){
   const used=[SOURCES.find(s=>s.id==='S13')].filter(Boolean);
   return json({answer:EDUCATION_ANSWER,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Curated evidence synthesis',build:BUILD_VERSION,referral:referral(question)});
  }
