@@ -1,4 +1,5 @@
 import { SOURCES } from './sources.js';
+import { classifyIntent } from './intent-router.js';
 const MODEL='@cf/zai-org/glm-4.7-flash';
 const BUILD_VERSION='2026-11-09-native-cron-agentic-verification-v8';
 const SELF_TEST_URL='https://mlb-portfolio-ambassador.mlb-ambassador-msb.workers.dev';
@@ -174,8 +175,13 @@ function selectSources(question,history=[]){
  const priorWords=new Set(tokenise(expand(previous)));
  const isFollowup=Boolean(previous)&&(FOLLOW_UP.test(question.trim())||/\b(that|those|this|it|they|them|previous|earlier)\b/i.test(question));
  const intent=INTERVIEW_ADDITIONAL_INTENTS.find(rule=>rule.re.test(question))||INTERVIEW_INTENTS.find(rule=>rule.re.test(question));
+ const classified=classifyIntent(question);
  const entity=ENTITY_PRIORITY.find(rule=>rule.re.test(question));
- const ids=[...(entity?.ids||[]),...(intent?.ids||[])];
+ const classifiedIds={
+  education:['S13'],application_experience:['S1','S2','S4','S15'],healthcare_motivation:['S28','S10','S17'],
+  language_skills:['S14'],interpersonal_conflict:['S29'],competing_priorities:['S23'],mlb_motivation:['S19','S28'],strengths_blindspots:['S30','S21']
+ }[classified.name]||[];
+ const ids=[...(entity?.ids||[]),...(intent?.ids||[]),...(classified.confidence>=0.55?classifiedIds:[])];
  const curated=ids.map(id=>SOURCES.find(s=>s.id===id)).filter(Boolean);
  if(intent?.ids?.length===1&&intent.ids[0]==='S19')return curated;
  const direct=[...new Map([...curated,...rankSources(qwords).map(x=>x.source)].map(s=>[s.id,s])).values()];
@@ -294,4 +300,4 @@ export default {async scheduled(controller){
  return json({answer:conversational,sources:used.map(({id,title,url,status})=>({id,title,url,status})),grounded:true,model:'Workers AI conversational synthesis',build:BUILD_VERSION,referral:referral(question)});
 
  }};
-export {selectSources,tokenise,referral,shouldRefuse,isApplicationExperience,isEducationQuestion};
+export {selectSources,tokenise,referral,shouldRefuse,isApplicationExperience,isEducationQuestion,classifyIntent};
