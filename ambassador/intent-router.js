@@ -1,12 +1,21 @@
 // Lightweight intent resolution inspired by Rasa-style examples and
 // confidence-gated dialogue policies. It is deliberately dependency-free so
 // it can run inside a Cloudflare Worker.
-const STOP=new Set(['a','an','and','are','about','can','could','do','does','for','he','how','i','is','me','of','tell','the','to','what','when','where','which','with','you','your','his','any','my']);
-const normalise=value=>(value.toLowerCase().match(/[\p{L}\p{N}]+/gu)||[]).filter(token=>token.length>2&&!STOP.has(token));
+const STOP=new Set(['a','an','and','are','about','background','can','could','do','does','experience','for','he','how','i','is','me','of','tell','the','to','what','when','where','which','with','you','your','his','any','my']);
+const CANONICAL=Object.freeze({
+ apps:'application',app:'application',applications:'application',software:'application',systems:'application',system:'application',
+ developer:'develop',developers:'develop',developed:'develop',developing:'develop',development:'develop',build:'develop',building:'develop',built:'develop',created:'develop',creating:'develop',engineering:'develop',
+ degrees:'degree',credentials:'credential',academic:'education',schooling:'education',
+ languages:'language',multilingual:'language',bilingual:'language',
+ conflicts:'conflict',disagreement:'conflict',disagreements:'conflict',
+ priorities:'priority',deadlines:'deadline',projects:'project'
+});
+const normalise=value=>(value.toLowerCase().match(/[\p{L}\p{N}]+/gu)||[])
+ .filter(token=>token.length>2&&!STOP.has(token)).map(token=>CANONICAL[token]||token);
 
 const INTENTS=Object.freeze([
  {name:'education',examples:['tell me about your education','what degrees does he have','describe his academic background','what credentials does Michael have']},
- {name:'application_experience',examples:['any experience developing applications','what software has he built','what apps has Michael created','tell me about his technical projects']},
+ {name:'application_experience',examples:['any experience developing applications','do you have development experience','what software has he built','what apps has Michael created','tell me about his technical projects']},
  {name:'healthcare_motivation',examples:['why did you choose healthcare','why healthcare','why work in healthcare','what led him to public health']},
  {name:'language_skills',examples:['what languages do you speak','do you speak foreign languages','is he fluent in Portuguese','what are his language skills']},
  {name:'interpersonal_conflict',examples:['how do you deal with interpersonal conflicts','how does he handle disagreement','how do you resolve conflict with a coworker']},
